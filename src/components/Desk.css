@@ -1,0 +1,44 @@
+#desk {
+    height: 50%;
+    background-image: url("desk.jpg");
+    margin: 0;
+    padding: 0;
+    background-size: contain;
+
+    display: flex;
+}
+
+.orders {
+    width: 20%;
+}
+
+.workspace {
+    width: 30%
+}
+
+.workspace > img {
+    height: 40vh
+}
+
+.rules {
+    all: unset;
+    width: 20%;
+    cursor: pointer;
+}
+
+.rules > img {
+    height: 40vh;
+
+}
+
+.dictionary {
+    all: unset;
+    width: 30%;
+    cursor: pointer;
+
+}
+
+.dictionary > img {
+    height: 40vh;
+    margin: 0;
+}
