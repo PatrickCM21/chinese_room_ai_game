@@ -1,14 +1,16 @@
 import Draggable from './Draggable'
+import DraggableAnywhere from './DraggableAnywhere'
 
-export default function DictionaryUI({ dictionary }) {
+
+export default function DictionaryUI({ dictionary, ref }) {
     const characterElements = dictionary.map(word => {
         return (
-            <Draggable key={word} id={word}>{word}</Draggable>
+            <Draggable key={word} id={`child-${word}`}>{word}</Draggable>
         )
     })
     return (
-        <div>
+        <DraggableAnywhere className='dictionary-ui' ref={ref}>
             {characterElements}
-        </div>
+        </DraggableAnywhere>
     )
 }

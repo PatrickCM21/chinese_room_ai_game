@@ -42,3 +42,13 @@
     height: 40vh;
     margin: 0;
 }
+
+.dictionary-ui {
+    position: absolute;
+    width: 128px;
+    height: 80px;
+    background-color: aliceblue;
+    visibility: hidden;
+
+    cursor: grab;
+}
