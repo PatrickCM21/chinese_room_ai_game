@@ -5,15 +5,31 @@
     padding: 0;
     background-size: contain;
 
-    display: flex;
+    display: grid;
+    grid-template-columns: 30% 20% 20% 30%;
+    grid-template-areas: "orders workspace dictionary rules";
+
+    width: 100%;
+}
+
+#desk > * {
+    position: relative;
 }
 
 .orders {
-    width: 20%;
+    height: 100%
 }
 
 .workspace {
-    width: 30%
+
+    margin: 8px;
+    padding: 2vh;
+
+    background-image: url("paper.png");
+    background-size: cover; /* Optional: Adjusts image size */
+
+    display: flex;
+
 }
 
 .workspace > img {
@@ -22,7 +38,6 @@
 
 .rules {
     all: unset;
-    width: 20%;
     cursor: pointer;
 }
 
@@ -33,7 +48,6 @@
 
 .dictionary {
     all: unset;
-    width: 30%;
     cursor: pointer;
 
 }
@@ -43,12 +57,31 @@
     margin: 0;
 }
 
-.dictionary-ui {
-    position: absolute;
-    width: 128px;
-    height: 80px;
-    background-color: aliceblue;
+.default-off {
     visibility: hidden;
+}
+
+.dictionary-ui {
+    background-color: aliceblue;
+    border: 1px solid black;
+    position:fixed;
+    z-index: 10;
+    top: 50%;
+    left: 50%;
+
+    display: flex;
+    gap: 6px;
+
+    width: 120px;
+    height: 60px;
 
     cursor: grab;
+}
+
+.draggable {
+    padding: 2px;
+    width: auto;
+    height: min-content;
+    background-color: beige;
+    border: 1px solid black;
 }
