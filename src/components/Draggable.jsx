@@ -6,6 +6,9 @@ import { useSortable } from '@dnd-kit/sortable';
 export default function Draggable({id, disabled=false, children, className, pos}) {
     const {attributes, listeners, setNodeRef, transform} = useDraggable({
         id,
+        data: {
+            type: 'container'
+        },
         disabled
     });
     const style = {

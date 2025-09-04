@@ -1,5 +1,5 @@
 import { closestCorners, DndContext, useSensor, useSensors, PointerSensor } from '@dnd-kit/core'
-import { SortableContext } from '@dnd-kit/sortable'
+import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
 
@@ -39,20 +39,78 @@ export default function Desk() {
     useSensor(PointerSensor, { activationConstraint: { distance: 3 } }) // tiny movement before drag starts
     );
 
+    function findContainer(itemId, containers) {
+        return Object.keys(containers).find(cid => {
+            return containers[cid].includes(itemId)
+
+        }
+        );
+    }
+
+    function findIndex(itemId, container) {
+        return container.indexOf(itemId);
+    }
+
+
+    function handleCharacterDragEnd(event) {
+        const {active, over} = event;
+        console.log(active)
+        console.log(over)
+
+        if (!over || active.id === over.id) return;
+
+        const prevContainer = findContainer(active.id, characters);
+        const newContainer = findContainer(over.id, characters);
+        console.log(characters[prevContainer])
+
+
+        if (prevContainer === newContainer) {
+            console.log("same container")
+            const oldIndex = findIndex(active.id, characters[prevContainer]);
+            const newIndex = findIndex(over.id, characters[newContainer]);
+            setCharacters((prev) => ({
+            ...prev,
+            [newContainer]: arrayMove(prev[newContainer], oldIndex, newIndex),
+            }));
+            return;
+        }
+
+        setCharacters(prev => {
+            const from = [...prev[prevContainer]];
+            const to = [...prev[newContainer]];
+
+            const oldIndex = findIndex(active.id, from);
+            const newIndex = findIndex(over.id, to);
+
+            let insertIndex = to.length;
+            if (newIndex != -1) insertIndex = newIndex;
+
+            from.splice(oldIndex, 1);
+            to.splice(insertIndex, 0, active.id)
+
+            return ({
+                ...prev,
+                [fromCid]: from,
+                [toCid]: to,
+            })
+        })
+    }
+
     return (
         <DndContext
             collisionDetection={closestCorners}
             sensors={sensors}
             modifiers={[restrictToWindowEdges]} 
             onDragStart={({active}) => {
-                String(active.id).startsWith("child-") ? setParentDisabled(true) : null
+                active.data.current.type === 'character' ? setParentDisabled(true) : null
             }}
-            onDragEnd={({ delta }) => {
+            onDragEnd={({ active, over, delta }) => {
             // No droppables: just commit the movement delta
                 if (!parentDisabled) {
                     setDicPos(p => ({ x: p.x + delta.x, y: p.y + delta.y }));
                 } else {
                     setParentDisabled(false);
+                    handleCharacterDragEnd({active, over})
                 }
             }}
         >
@@ -63,7 +121,7 @@ export default function Desk() {
                 </div>
                 <div className='workspace'>
                     <SortableContext
-                        items={characters.inPaper.map(char => `child-${char}`)}
+                        items={characters.inPaper}
                     >
                         {playedWords}
                     </SortableContext>
