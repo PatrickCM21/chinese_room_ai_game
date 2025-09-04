@@ -1,24 +1,42 @@
-import { closestCorners, DndContext, useSensor, useSensors, PointerSensor } from '@dnd-kit/core'
+import { closestCorners, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from '@dnd-kit/core'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
 
-import Draggable from './Draggable'
-import SortableDraggable from './SortableDraggable'
-import Droppable from './Droppable'
 import DictionaryUI from './DictionaryUI'
+import PaperDroppable from './PaperDroppable';
 
 
 export default function Desk() {
-    const [characters, setCharacters] = React.useState({
-        inDic: ["你", "好"],
-        inPaper: ["中", "文"]
-    })
+    const [characters, setCharacters] = React.useState([{
+        id: "dictionary",
+        items: [
+            {id: 0 , character: "你"},
+            {id: 1 , character: "好"}
+        ]
+        },
+        {
+            id: "paper",
+        items: [
+            {id: 3 , character: "中"},
+            {id: 4 , character: "文"}
+        ]
+        }]
+    )
 
     const [dicPos, setDicPos] = React.useState({ x: 120, y: 120 });
-
+    const [activeId, setActiveId] = React.useState(null)
     const [parentDisabled, setParentDisabled] = React.useState(false)
     const dictionaryUIRef = React.useRef(null)
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8
+            }
+        }),
+        useSensor(KeyboardSensor)
+    )
 
     function openDictionary() {
         const dictionaryEl = dictionaryUIRef.current;
@@ -29,71 +47,134 @@ export default function Desk() {
         }
     }
 
-    const playedWords = characters.inPaper.map((word) => {
-        return <SortableDraggable key={word} id={word}>
-            {word}
-        </SortableDraggable>
-    })
+    
 
-    const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 3 } }) // tiny movement before drag starts
-    );
-
-    function findContainer(itemId, containers) {
-        return Object.keys(containers).find(cid => {
-            return containers[cid].includes(itemId)
-
+    function findContainerId(itemId) {
+        if (characters.some(container => container.id === itemId)) {
+            return itemId
         }
-        );
+        return characters.find(container => 
+            container.items.some((item) => item.id === itemId)
+        )?.id;
     }
 
     function findIndex(itemId, container) {
         return container.indexOf(itemId);
     }
+    
+    
+    const getActiveItem = () => {
+        for (const container of characters) {
+        const item = container.items.find(item => 
+            item.id === activeId
+        )
+        if (item) return item
+        }
+        return null
+    }
 
+
+    function handleDragStart(event) {
+        setActiveId(event.active.id)
+    }
+
+    function handleDragOver(event) {
+        const { active, over } = event;
+
+        if (!over) return;
+
+        const activeId = active.id;
+        const overId = over.id;
+
+        const activeContainerId = findContainerId(activeId)
+        const overContainerId = findContainerId(overId)
+
+        
+        if (!activeContainerId || !overContainerId) return;
+
+        if (activeContainerId === overContainerId) return;
+
+        setCharacters(prev => {
+            const activeContainer = prev.find(c => c.id === activeContainerId)
+            if (!activeContainer) return prev;
+            
+            const activeItem = activeContainer.items.find(item => item.id === activeId)
+            if (!activeItem) return prev;
+
+            const newContainers = prev.map(container => {
+                if (container.id === activeContainerId) {
+                    return {
+                        ...container,
+                        items: container.items.filter(item => item.id !== activeId)
+                    }
+                }
+                if (container.id === overContainerId) {
+                    if (overId === overContainerId) {
+                        console.log("over empty")
+                        return {
+                        ...container,
+                        items: [...container.items, activeItem]
+                        }
+                    }
+                }
+
+                const overItemIndex = container.items.findIndex(item => item.id === overId)
+                if (overItemIndex !== -1) {
+                    return {
+                        ...container,
+                        items: [
+                        ...container.items.slice(0, overItemIndex + 1),
+                        activeItem,
+                        ...container.items.slice(overItemIndex + 1)
+                        ]
+                    }
+                }
+
+                return container
+            })
+            return newContainers
+        })
+    }
 
     function handleCharacterDragEnd(event) {
         const {active, over} = event;
-        console.log(active)
-        console.log(over)
 
-        if (!over || active.id === over.id) return;
-
-        const prevContainer = findContainer(active.id, characters);
-        const newContainer = findContainer(over.id, characters);
-        console.log(characters[prevContainer])
-
-
-        if (prevContainer === newContainer) {
-            console.log("same container")
-            const oldIndex = findIndex(active.id, characters[prevContainer]);
-            const newIndex = findIndex(over.id, characters[newContainer]);
-            setCharacters((prev) => ({
-            ...prev,
-            [newContainer]: arrayMove(prev[newContainer], oldIndex, newIndex),
-            }));
+        if (!over) {
+            setActiveId(null);
             return;
         }
+        const prevContainer = findContainerId(active.id);
+        const newContainer = findContainerId(over.id)
+        if (!prevContainer || !newContainer) return;
 
-        setCharacters(prev => {
-            const from = [...prev[prevContainer]];
-            const to = [...prev[newContainer]];
 
-            const oldIndex = findIndex(active.id, from);
-            const newIndex = findIndex(over.id, to);
+        if (prevContainer === newContainer && active.id === over.id) {
+            const containerIndex = characters.findIndex(c => c.id === prevContainer)
 
-            let insertIndex = to.length;
-            if (newIndex != -1) insertIndex = newIndex;
+            if (containerIndex === -1) {
+                setActiveId(null)
+                return
+            }
 
-            from.splice(oldIndex, 1);
-            to.splice(insertIndex, 0, active.id)
+            const container = characters[containerIndex]
+            const activeIndex = container.items.findIndex(item => item.id === active.id)
+            const overIndex = container.items.findIndex(item => item.id === over.id)
 
-            return ({
-                ...prev,
-                [fromCid]: from,
-                [toCid]: to,
-            })
-        })
+            if (activeIndex !== -1 && overIndex !== -1) {
+                const newItems = arrayMove(container.items, activeIndex, overIndex)
+
+                setCharacters((container) => {
+                    return container.map((c, i) => {
+                        if (i === containerIndex) {
+                            return {...c, items: newItems}
+                        } else {
+                            return c
+                        }
+                    })
+                })
+            }
+        }
+        setActiveId(null)
     }
 
     return (
@@ -101,9 +182,11 @@ export default function Desk() {
             collisionDetection={closestCorners}
             sensors={sensors}
             modifiers={[restrictToWindowEdges]} 
-            onDragStart={({active}) => {
-                active.data.current.type === 'character' ? setParentDisabled(true) : null
+            onDragStart={(event) => {
+                event.active.data.current.type === 'character' ? setParentDisabled(true) : null
+                handleDragStart(event)
             }}
+            onDragOver={handleDragOver}
             onDragEnd={({ active, over, delta }) => {
             // No droppables: just commit the movement delta
                 if (!parentDisabled) {
@@ -120,11 +203,7 @@ export default function Desk() {
 
                 </div>
                 <div className='workspace'>
-                    <SortableContext
-                        items={characters.inPaper}
-                    >
-                        {playedWords}
-                    </SortableContext>
+                    <PaperDroppable container={characters.find(container => container.id === "paper")} />
                 </div>
 
                 <button className="dictionary" onClick={openDictionary}>
@@ -137,9 +216,8 @@ export default function Desk() {
 
             </section>
             <DictionaryUI 
-                dictionary={characters.inDic} 
+                dictionary={characters.find(container => container.id === "dictionary")} 
                 ref={dictionaryUIRef} 
-                id='dictionary-ui'
                 pos={dicPos} 
                 disabled={parentDisabled}
             />
@@ -147,14 +225,3 @@ export default function Desk() {
         </DndContext>
     )
 }
-
-// <div ref={ref} className='dictionary-ui-holder'>
-//     <DndContext
-//         
-        
-//     >
-//         <DraggableBox  className={className}>
-//             {children}
-//         </DraggableBox>
-//     </DndContext>
-// </div>

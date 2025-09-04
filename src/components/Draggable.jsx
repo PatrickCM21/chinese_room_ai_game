@@ -3,11 +3,11 @@ import {useDraggable} from '@dnd-kit/core';
 import {CSS} from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
 
-export default function Draggable({id, disabled=false, children, className, pos}) {
+export default function Draggable({id, disabled=false, children, className, pos={x: 0,y: 0}, type}) {
     const {attributes, listeners, setNodeRef, transform} = useDraggable({
         id,
         data: {
-            type: 'container'
+            type
         },
         disabled
     });
