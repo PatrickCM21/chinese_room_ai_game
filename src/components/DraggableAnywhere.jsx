@@ -1,10 +1,23 @@
 import Draggable from './Draggable' 
+import React from 'react'
+import { useDndMonitor } from '@dnd-kit/core';
 
-function DraggableAnywhere({ children, ref, className, id, pos, disabled }) {
+function DraggableAnywhere({ children, ref=null, className, id, startPos, disabled=false, off=false }) {
+    const [pos, setPos] = React.useState({ x: startPos.x, y: startPos.y });
+
+    useDndMonitor({
+        onDragEnd({active, delta}) {
+            if (active?.id !== id) return; 
+            if (!disabled) {
+                setPos(p => ({ x: p.x + delta.x, y: p.y + delta.y }));
+                console.log("setting pos: x-" + pos.x + " y-" + pos.y)
+            }
+        }
+    })
 
     return (
-        <div ref={ref} className='default-off'>
-            <Draggable id={id} ref={ref} className={className} pos={pos} disabled={disabled}>
+        <div ref={ref} className={off ? "default-off" : ""}>
+            <Draggable id={id} className={className} pos={pos} disabled={disabled}>
                 {children}
             </Draggable>
         </div>

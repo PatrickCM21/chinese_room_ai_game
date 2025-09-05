@@ -1,33 +1,62 @@
-import { closestCorners, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor } from '@dnd-kit/core'
-import { arrayMove, SortableContext } from '@dnd-kit/sortable'
+import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
+import { v4 as newId } from 'uuid';
 
 import DictionaryUI from './DictionaryUI'
 import PaperDroppable from './PaperDroppable';
+import Order from './oRDER.JSX';
+import Answer from './Answer';
 
+const orderAnswerContainer = {
+    ORDER: 0,
+    ANSWER: 1
+}
+
+const characterContainer = {
+    DICTIONARY: 0,
+    PAPER: 1
+}
 
 export default function Desk() {
     const [characters, setCharacters] = React.useState([{
         id: "dictionary",
         items: [
-            {id: 0 , character: "你"},
-            {id: 1 , character: "好"}
+            {id: 1 , character: "你"},
+            {id: 2 , character: "好"},
+            {id: 3 , character: "中"},
+            {id: 4 , character: "文"},
+            {id: 7 , character: "马"},
         ]
         },
         {
-            id: "paper",
+        id: "paper",
         items: [
-            {id: 3 , character: "中"},
-            {id: 4 , character: "文"}
+            {id: 5 , character: "中"},
+            {id: 6 , character: "很"}
         ]
-        }]
-    )
+    }])
 
-    const [dicPos, setDicPos] = React.useState({ x: 120, y: 120 });
+    const [orderAnswer, setOrderAnswer] = React.useState([{
+        id: "orders",
+        items: [
+            {id: 1 , text: "你好马"},
+        ]
+        },
+
+        {
+        id: "answers",
+        items: [
+            {id: 5 , text: "好"},
+        ]
+    }])
+
+    
     const [activeId, setActiveId] = React.useState(null)
     const [parentDisabled, setParentDisabled] = React.useState(false)
     const dictionaryUIRef = React.useRef(null)
+    const dictionaryImg = React.useRef(null)
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -42,8 +71,11 @@ export default function Desk() {
         const dictionaryEl = dictionaryUIRef.current;
         if (!dictionaryEl.style.visibility || dictionaryEl.style.visibility === "hidden") {
             dictionaryEl.style.visibility = "visible"
+            dictionaryImg.current.src= "dictionaryOpen.png"
         } else {
             dictionaryEl.style.visibility = "hidden"
+            dictionaryImg.current.src= "dictionary.png"
+
         }
     }
 
@@ -56,10 +88,6 @@ export default function Desk() {
         return characters.find(container => 
             container.items.some((item) => item.id === itemId)
         )?.id;
-    }
-
-    function findIndex(itemId, container) {
-        return container.indexOf(itemId);
     }
     
     
@@ -101,6 +129,8 @@ export default function Desk() {
             const activeItem = activeContainer.items.find(item => item.id === activeId)
             if (!activeItem) return prev;
 
+            
+
             const newContainers = prev.map(container => {
                 if (container.id === activeContainerId) {
                     return {
@@ -110,7 +140,6 @@ export default function Desk() {
                 }
                 if (container.id === overContainerId) {
                     if (overId === overContainerId) {
-                        console.log("over empty")
                         return {
                         ...container,
                         items: [...container.items, activeItem]
@@ -143,12 +172,12 @@ export default function Desk() {
             setActiveId(null);
             return;
         }
+
         const prevContainer = findContainerId(active.id);
         const newContainer = findContainerId(over.id)
         if (!prevContainer || !newContainer) return;
 
-
-        if (prevContainer === newContainer && active.id === over.id) {
+        if (prevContainer === newContainer && active.id !== over.id) {
             const containerIndex = characters.findIndex(c => c.id === prevContainer)
 
             if (containerIndex === -1) {
@@ -164,7 +193,7 @@ export default function Desk() {
                 const newItems = arrayMove(container.items, activeIndex, overIndex)
 
                 setCharacters((container) => {
-                    return container.map((c, i) => {
+                    return characters.map((c, i) => {
                         if (i === containerIndex) {
                             return {...c, items: newItems}
                         } else {
@@ -177,51 +206,136 @@ export default function Desk() {
         setActiveId(null)
     }
 
+    function ItemOverlay({ children }) {
+        return (
+            <div className='draggable'>
+                <span >{children}</span>
+            </div>
+        )
+    }
+
+    const orderList = orderAnswer.find(container => container.id === 'orders').items.map(order => {
+        return <Order id={order.id}>
+            {order.text}
+        </Order>
+    })
+
+    const answerList = orderAnswer.find(container => container.id === 'answers').items.map(order => {
+        return <Answer id={order.id}>
+            {order.text}
+        </Answer>
+    })
+
+    function resetPaper() {
+        setCharacters(containers => {
+            return containers.map(container => {
+                if (container.id === 'paper') {
+                    return {
+                        id: 'paper',
+                        items: []
+                    }
+                }
+                return {
+                    ...container,
+                    items: [
+                        ...container.items,
+                        ...characters[characterContainer.PAPER].items
+                    ]
+                }
+            })
+        })
+    }
+
+    function collectCharacters(items) {
+        const charList = items.map(item => item.character);
+        return charList.join("")
+    }
+
+    function createAnswer() {
+        if (characters[characterContainer.PAPER].items.length === 0) return;
+        setOrderAnswer(prev => {
+            return prev.map(container => {
+                if (container.id !== 'answers') return container
+                return {
+                    ...container,
+                    items: [
+                        ...container.items,
+                        {
+                            id: newId(),
+                            text: collectCharacters(characters[characterContainer.PAPER].items)
+                        }
+                    ]
+                }
+            })
+
+        })
+        resetPaper()
+        console.log(orderAnswer)
+    }
+
     return (
-        <DndContext
-            collisionDetection={closestCorners}
-            sensors={sensors}
-            modifiers={[restrictToWindowEdges]} 
-            onDragStart={(event) => {
-                event.active.data.current.type === 'character' ? setParentDisabled(true) : null
-                handleDragStart(event)
-            }}
-            onDragOver={handleDragOver}
-            onDragEnd={({ active, over, delta }) => {
-            // No droppables: just commit the movement delta
-                if (!parentDisabled) {
-                    setDicPos(p => ({ x: p.x + delta.x, y: p.y + delta.y }));
-                } else {
+    
+        <section id='desk'>
+            <DndContext
+                sensors={sensors}
+                modifiers={[restrictToWindowEdges]} 
+            >
+                <div className='orders'>
+                    
+                    {orderList}
+                    <div className='answers'>
+                        {answerList}
+                    </div>
+                </div>
+            </DndContext>
+            <DndContext
+                collisionDetection={closestCenter}
+                sensors={sensors}
+                modifiers={[restrictToWindowEdges]} 
+                onDragStart={(event) => {
+                    event.active.data.current.type === 'character' ? setParentDisabled(true) : null
+                    handleDragStart(event)
+                }}
+                onDragOver={handleDragOver}
+                onDragEnd={({ active, over, delta }) => {
                     setParentDisabled(false);
                     handleCharacterDragEnd({active, over})
-                }
-            }}
-        >
-            <section id='desk'>
-            
-                <div className='orders'>
-
-                </div>
+                    
+                }}
+            >
                 <div className='workspace'>
+                    <button className='paper-furl-btn' onClick={createAnswer}></button>
                     <PaperDroppable container={characters.find(container => container.id === "paper")} />
                 </div>
 
                 <button className="dictionary" onClick={openDictionary}>
-                    <img src="dictionary.png" alt='character dictionary'></img>
+                    <img src="dictionary.png" alt='character dictionary' ref={dictionaryImg}></img>
                 </button>
-                <button className="rules">
-                    <img src="rules.png" alt='rule book'></img>
-                    
-                </button>
+                <DictionaryUI 
+                    dictionary={characters.find(container => container.id === "dictionary")} 
+                    ref={dictionaryUIRef} 
+                    startPos={{x: 150, y: 150}} 
+                    disabled={parentDisabled}
+                />
+                <DragOverlay
+                    dropAnimation={{
+                    duration: 150,
+                    easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
+                    }}
+                    > 
+                    {activeId ? (
+                    <ItemOverlay>
+                        {getActiveItem()?.character}
+                    </ItemOverlay>
+                    ): null}
+                </DragOverlay>
+            </DndContext>
+            <button className="rules">
+                <img src="rules.png" alt='rule book'></img>
+                
+            </button>
 
-            </section>
-            <DictionaryUI 
-                dictionary={characters.find(container => container.id === "dictionary")} 
-                ref={dictionaryUIRef} 
-                pos={dicPos} 
-                disabled={parentDisabled}
-            />
+        </section>
 
-        </DndContext>
     )
 }

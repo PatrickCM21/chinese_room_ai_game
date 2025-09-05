@@ -17,11 +17,36 @@
 }
 
 .orders {
-    height: 100%
+    grid-area: orders;
+    height: 100%;
+
+}
+
+.paper-ui {
+    position: fixed;
+}
+
+.paper {
+    background-image: url("paper.png");
+    width: 29vh;
+    height: auto;
+    padding: 20px;
+
+    object-fit:contain;
+
+    cursor: grab;
+
+    font-size: 20px;
+
+}
+
+.order > span {
+    display: block;
+    padding-bottom: 3px;
 }
 
 .workspace {
-
+    grid-area: workspace;
     margin: 8px;
     padding: 2vh;
 
@@ -29,10 +54,23 @@
     background-size: cover; 
     display: flex;
     gap: 12px;
+    position: relative;
+
 }
 
-.workspace > img {
-    height: 40vh
+.paper-furl-btn {
+    all: unset;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.workspace:has(.paper-furl-btn:hover) {
+    background-image: url("paperFurl.png");
 }
 
 .rules {
@@ -46,6 +84,8 @@
 }
 
 .dictionary {
+    grid-area: dictionary;
+
     all: unset;
     cursor: pointer;
 
@@ -60,28 +100,42 @@
     visibility: hidden;
 }
 
-.dictionary-ui {
-    background-color: aliceblue;
-    border: 1px solid black;
-    position:fixed;
-    top: 50%;
-    left: 50%;
-
+.container {
     display: flex;
     gap: 6px;
+    flex-direction: row
+}
 
-    width: 120px;
-    height: 60px;
+.dictionary-ui {
+    background-color: aliceblue; 
+    border: 1px solid black; 
+    position:fixed; 
 
+    padding:6px;
+    
+    width: 50vh; 
+    height: 30vh; 
     cursor: grab;
 }
 
 .draggable {
-    padding: 2px;
+    padding: 4px;
     width: auto;
     height: min-content;
-    background-color: beige;
+    background-color: rgb(245, 245, 220);
     border: 1px solid black;
     cursor: grab;
     z-index: 5;
+}
+
+
+.dragging {
+    background-color: rgba(245, 245, 220, 0.6);
+    border: 1px solid rgb(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.2);
+}
+
+.rules {
+    grid-area: rules;
+
 }

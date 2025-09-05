@@ -12,7 +12,7 @@ export default function PaperDroppable({container}) {
     })
 
     return (
-        <Droppable id={container.id}>
+        <Droppable id={container.id} className='container'>
             <SortableContext
                 items={items.map(item => item.id)}
             >

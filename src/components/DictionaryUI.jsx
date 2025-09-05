@@ -1,27 +1,32 @@
-import { SortableContext } from '@dnd-kit/sortable'
+import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import Draggable from './Draggable'
 import SortableDraggable from './SortableDraggable'
 import DraggableAnywhere from './DraggableAnywhere'
 import Droppable from './Droppable'
 
 
-export default function DictionaryUI({ dictionary, ref, pos, disabled }) {
+export default function DictionaryUI({ dictionary, ref, startPos, disabled }) {
     const characterElements = dictionary.items.map(word => {
         return (
             <SortableDraggable key={word.id} id={word.id} className='draggable' type='character'>{word.character}</SortableDraggable>
         )
     })
+
     return (
         <DraggableAnywhere 
-            className='dictionary-ui' 
-            id={dictionary.id} 
+            id='dictionary-handle'
             ref={ref} 
-            pos={pos} 
+            startPos={startPos} 
             disabled={disabled} 
+            className='dictionary-ui'
             type='container'
+            off={true}
         >
-            <Droppable id='dictionary-drop'>
-                <SortableContext items={dictionary.items.map(item => item.id)}>
+            <Droppable id={dictionary.id} className='container'>
+                <SortableContext 
+                    items={dictionary.items.map(item => item.id)}
+                    strategy={horizontalListSortingStrategy}
+                >
                     {characterElements}
                 </SortableContext>
             </Droppable>
