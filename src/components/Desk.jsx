@@ -4,10 +4,13 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
 import { v4 as newId } from 'uuid';
 
+import { useWindowWidth } from '@react-hook/window-size'
+
 import DictionaryUI from './DictionaryUI'
 import PaperDroppable from './PaperDroppable';
 import Order from './oRDER.JSX';
 import Answer from './Answer';
+import Droppable from './Droppable';
 
 const orderAnswerContainer = {
     ORDER: 0,
@@ -19,7 +22,11 @@ const characterContainer = {
     PAPER: 1
 }
 
+
 export default function Desk() {
+    const windowWidth = useWindowWidth();
+
+
     const [characters, setCharacters] = React.useState([{
         id: "dictionary",
         items: [
@@ -57,6 +64,42 @@ export default function Desk() {
     const [parentDisabled, setParentDisabled] = React.useState(false)
     const dictionaryUIRef = React.useRef(null)
     const dictionaryImg = React.useRef(null)
+    const outputSidebar = React.useRef(null)
+    const [holdingOutput, setHoldingOutput] = React.useState(false)
+    const [showOutput, setShowOutput] = React.useState(false)
+
+    React.useEffect(() => {
+        const checkMousePosition = (e) => {
+            if (holdingOutput) {
+            console.log(outputSidebar.current)
+
+                if (e.clientX > (windowWidth * 0.6)) {
+                    setShowOutput(true)
+                } else {
+                    setShowOutput(false)
+                }
+            }
+        }
+        window.addEventListener('mousemove', checkMousePosition)
+
+        return () => {
+            window.removeEventListener('mousemove', checkMousePosition)
+            setShowOutput(false)
+
+        }
+    }, [holdingOutput])
+
+    const orderList = orderAnswer.find(container => container.id === 'orders').items.map(order => {
+        return <Order id={order.id}>
+            {order.text}
+        </Order>
+    })
+
+    const answerList = orderAnswer.find(container => container.id === 'answers').items.map(order => {
+        return <Answer id={order.id}>
+            {order.text}
+        </Answer>
+    })
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -214,18 +257,6 @@ export default function Desk() {
         )
     }
 
-    const orderList = orderAnswer.find(container => container.id === 'orders').items.map(order => {
-        return <Order id={order.id}>
-            {order.text}
-        </Order>
-    })
-
-    const answerList = orderAnswer.find(container => container.id === 'answers').items.map(order => {
-        return <Answer id={order.id}>
-            {order.text}
-        </Answer>
-    })
-
     function resetPaper() {
         setCharacters(containers => {
             return containers.map(container => {
@@ -273,21 +304,52 @@ export default function Desk() {
         console.log(orderAnswer)
     }
 
+    function handleNotesDragStart() {
+        setHoldingOutput(true)
+    }
+
+    function handleNotesDragHover() {
+        console.log("over")
+    }
+
+    function handleNotesDragEnd() {
+        setHoldingOutput(false)
+
+
+    }
+
     return (
-    
-        <section id='desk'>
+        <>
             <DndContext
                 sensors={sensors}
                 modifiers={[restrictToWindowEdges]} 
+                onDragStart={handleNotesDragStart}
+                onDragOver={handleNotesDragHover}
+                onDragEnd={handleNotesDragEnd}
             >
-                <div className='orders'>
-                    
+                <div>
                     {orderList}
-                    <div className='answers'>
-                        {answerList}
+
+                    {answerList}
+                </div>
+                <div className={`output ${showOutput ? 'output-display' : ''}`} ref={outputSidebar}>
+                    <div className='bin'>
+                        <Droppable id='bin' className='container'>
+
+                        </Droppable>
+                        
+                    </div>
+                    <div className='paper-container'>
+                        <Droppable id='paper-container' className='container'>
+                            
+                        </Droppable>
+                        
                     </div>
                 </div>
+            
             </DndContext>
+            <section id='desk'>
+            
             <DndContext
                 collisionDetection={closestCenter}
                 sensors={sensors}
@@ -303,6 +365,7 @@ export default function Desk() {
                     
                 }}
             >
+                <div className='orders'></div>
                 <div className='workspace'>
                     <button className='paper-furl-btn' onClick={createAnswer}></button>
                     <PaperDroppable container={characters.find(container => container.id === "paper")} />
@@ -334,8 +397,9 @@ export default function Desk() {
                 <img src="rules.png" alt='rule book'></img>
                 
             </button>
+            
 
         </section>
-
+    </>
     )
 }

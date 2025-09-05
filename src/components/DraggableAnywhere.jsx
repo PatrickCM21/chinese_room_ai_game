@@ -10,7 +10,6 @@ function DraggableAnywhere({ children, ref=null, className, id, startPos, disabl
             if (active?.id !== id) return; 
             if (!disabled) {
                 setPos(p => ({ x: p.x + delta.x, y: p.y + delta.y }));
-                console.log("setting pos: x-" + pos.x + " y-" + pos.y)
             }
         }
     })

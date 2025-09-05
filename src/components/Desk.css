@@ -19,11 +19,12 @@
 .orders {
     grid-area: orders;
     height: 100%;
-
+    position: relative;
 }
 
 .paper-ui {
     position: fixed;
+    z-index: 12;
 }
 
 .paper {
@@ -45,6 +46,57 @@
     padding-bottom: 3px;
 }
 
+.output {
+    background-color: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 25%;
+    height: 100%;
+
+    display: grid;
+    grid-template-rows: 20% 30% 10% 30% 10%;
+    grid-template-areas: 
+    "."
+    "bin"
+    "."
+    "paper-container"
+    ".";
+
+    z-index: 10;
+
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+}
+
+.output-display {
+    transform: translateX(0);
+
+}
+
+
+.bin {
+    grid-area: bin;
+    background-image: url("bin.png");
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+
+}
+
+.paper-container {
+    grid-area: paper-container;
+
+    background-image: url("paperContainer.png");
+    background-position: center center;
+
+    background-size: contain;
+    background-repeat: no-repeat;
+
+
+}
+
 .workspace {
     grid-area: workspace;
     margin: 8px;
@@ -52,6 +104,7 @@
 
     background-image: url("paper.png");
     background-size: cover; 
+
     display: flex;
     gap: 12px;
     position: relative;
