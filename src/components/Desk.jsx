@@ -53,26 +53,26 @@ export default function Desk() {
         {
         id: "orders",
         items: [
-            {id: 1 , text: "你好马"},
+            {id: 11 , text: "你好马",  type: 'orders'},
         ]
         },
         {
         id: "answers",
         items: [
-            {id: 2 , text: "好"},
+            {id: 12 , text: "好",  type: 'answers'},
         ]
         },
         {
         id: "stapler",
         items: [
-            {id: 3 , text: "你你你", type: 'orders'}
+            {id: 13 , text: "你你你", type: 'orders'}
         ]
         },
         {
         id: "finished",
         items: [
             {
-                id: 4,
+                id: 14,
                 order: null,
                 answer: null,  
             }
@@ -92,6 +92,8 @@ export default function Desk() {
     const outputSidebar = React.useRef(null)
     const [holdingOutput, setHoldingOutput] = React.useState(false)
     const [showOutput, setShowOutput] = React.useState(false)
+    const [hoverDropped, setHoverDropped] = React.useState(false)
+    const [hoverDroppedItem, setHoverDroppedItem] = React.useState(null)
 
     
 
@@ -128,7 +130,7 @@ export default function Desk() {
         </Answer>
     })
 
-
+    
     const staplerItems = orderAnswer[orderAnswerContainer.STAPLER]
     const orderItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'orders')
     const answerItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'answers')
@@ -204,11 +206,16 @@ export default function Desk() {
     }
 
     const getActiveItem = () => {
+        let item;
         for (const container of characters) {
-        const item = container.items.find(item => 
+            item = container.items.find(item => 
             item.id === activeId
         )
         if (item) return item
+        }
+        for (const container of orderAnswer) {
+            item = container.items.find(item => item.id === activeId)
+            if (item) return item
         }
         return null
     }
@@ -317,10 +324,19 @@ export default function Desk() {
         setActiveId(null)
     }
 
-    function ItemOverlay({ children }) {
+    function CharacterOverlay({ children, className }) {
         return (
-            <div className='draggable'>
+            <div className={className}>
                 <span >{children}</span>
+            </div>
+        )
+    }
+
+    function PaperOverlay({ children, className }) {
+        return (
+            <div className={`${className} ${children.type === 'orders' ? 'order' : 'answer'}`}>
+                {children.type === 'orders' ? <span>Please Respond:</span>: null}
+                {children.text}
             </div>
         )
     }
@@ -369,35 +385,91 @@ export default function Desk() {
 
         })
         resetPaper()
-        console.log(orderAnswer)
     }
 
     function createResponse() {
-        
+
     }
 
-    function handleNotesDragStart() {
+    function handleNotesDragStart({ active, over }) {
         setHoldingOutput(true)
+
+        setActiveId(active.id)
     }
 
-    function handleNotesDragHover(event) {
+    function handleNotesDragOver(event) {
         const { active, over } = event;
 
-        if (!over) return;
-
         const activeId = active.id;
+        const activeContainerId = findPaperContainerId(activeId)
+        const activeContainerIndex = orderAnswer.findIndex(c => c.id === activeContainerId)
+        console.log(activeId)
+        console.log(orderAnswer)
+        console.log(orderAnswer[activeContainerIndex])
+        const activeObj = orderAnswer[activeContainerIndex].items.find(item => item.id === activeId)
+
+
+
+        if (!over) {
+            if (hoverDropped) {
+                console.log("triggered hover drop")
+                setOrderAnswer(prev => {
+                    return prev.map(container => {
+                        if (container.id === 'stapler') {
+                            const addedItem = container.items.find(item => item.id === activeId)
+                            console.log(addedItem)
+                            console.log(hoverDroppedItem)
+                            let itemList;
+                            if (hoverDroppedItem) {
+                                itemList = 
+                                [...container.items.filter(item => item.id !== addedItem.id),
+                                hoverDroppedItem
+                                ]
+                            } else {
+                                itemList = [...container.items.filter(item => item.id !== addedItem.id)]
+                            }
+                            
+                            return  {
+                                ...container,
+                                items: itemList
+                            }
+                        } 
+
+                        if (container.id === activeObj.type) {
+                            let itemList;
+                            console.log(activeObj)
+                            if (hoverDroppedItem) {
+                                itemList = [...container.items.filter(item => item.id !== hoverDroppedItem.id), activeObj]
+                            } else {
+                                itemList = [...container.items, activeObj]
+                            }
+                            return {
+                                ...container,
+                                items: itemList
+                            }
+                            
+                        }
+                        return container;
+                    })
+
+                })
+                setHoverDropped(false)
+                setHoverDroppedItem(null)
+
+            }
+            return;
+
+        } 
+
         const overId = over.id;
 
         console.log("active : " + activeId)
         console.log("over : " + overId)
 
-        const activeContainerId = findPaperContainerId(activeId)
         const overContainerId = findPaperContainerId(overId)
 
-        const activeContainerIndex = orderAnswer.findIndex(c => c.id === activeContainerId)
         const overContainerIndex = orderAnswer.findIndex(c => c.id === overContainerId)
 
-        const activeObj = orderAnswer[activeContainerIndex].items.find(item => item.id === activeId)
 
         console.log("active cont: " + activeContainerId)
         console.log("over cont: " + overContainerId)
@@ -405,9 +477,6 @@ export default function Desk() {
         if (!activeContainerId || !overContainerId) return;
 
         if (activeContainerId === overContainerId) return;
-
-        console.log(orderAnswer[orderAnswerContainer.ANSWER].items)
-
 
         setOrderAnswer(prev => {
             return prev.map(container => {
@@ -418,6 +487,9 @@ export default function Desk() {
                             {...activeObj, type: activeContainerId}
                         ]
                         : [...container.items, {...activeObj, type: activeContainerId}]
+                    setHoverDropped(true)
+                    setHoverDroppedItem(existingItem)
+                    
                     return  {
                         ...container,
                         items: itemList
@@ -426,10 +498,6 @@ export default function Desk() {
 
                 if (container.id === activeContainerId) {
                     const existingItem = prev[orderAnswerContainer.STAPLER].items.find(item => item.type === activeContainerId)
-                    // console.log("prev items")
-                    // console.log(prev[orderAnswerContainer.STAPLER].items)
-                    // console.log("found item")
-                    // console.log(existingItem)
                     const itemList = existingItem ? 
                         [...container.items.filter(item => item.id !== activeId),
                         existingItem
@@ -447,9 +515,11 @@ export default function Desk() {
 
     }
 
-    function handleNotesDragEnd() {
+    function handleNotesDragEnd({ active, over }) {
         setHoldingOutput(false)
-
+        setActiveId(null)
+        setHoverDropped(false)
+        setHoverDroppedItem(null)
 
     }
 
@@ -462,7 +532,7 @@ export default function Desk() {
                 modifiers={[restrictToWindowEdges]}  
                 autoScroll={false}
                 onDragStart={handleNotesDragStart}
-                onDragOver={handleNotesDragHover}
+                onDragMove={handleNotesDragOver}
                 onDragEnd={handleNotesDragEnd}
             >
                 <div>
@@ -492,6 +562,14 @@ export default function Desk() {
                         {staplerItemsElements}
                     </Droppable>
                 </div>
+                <DragOverlay
+                    > 
+                    {activeId ? (
+                    <PaperOverlay className='paper'>
+                        {getActiveItem()}
+                    </PaperOverlay>
+                    ): null}
+                </DragOverlay>
             
             </DndContext>
 
@@ -548,9 +626,9 @@ export default function Desk() {
                     }}
                     > 
                     {activeId ? (
-                    <ItemOverlay>
+                    <CharacterOverlay className='draggable'>
                         {getActiveItem()?.character}
-                    </ItemOverlay>
+                    </CharacterOverlay>
                     ): null}
                 </DragOverlay>
             </DndContext>
