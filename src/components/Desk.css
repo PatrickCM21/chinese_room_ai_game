@@ -17,12 +17,14 @@
 }
 
 .stapler {
+    all: unset;
     position: absolute;
     height: 40vh;
     width: 40vh;
     margin: 0;
     top: 50%;
     left: 20%;
+    cursor: pointer;
 
 
 }
@@ -30,7 +32,8 @@
 .stapler > img {
     height: 40vh;
     margin: 0;
-    position: fixed;
+    position: absolute;
+    top: 0;
 }
 
 .stapler-ui {
@@ -134,7 +137,7 @@
 
 .bin {
     grid-area: bin;
-    background-image: url("bin.png");
+    background-image: url("binEmpty.png");
     background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;
@@ -145,7 +148,7 @@
 .paper-container {
     grid-area: paper-container;
 
-    background-image: url("paperContainer.png");
+    background-image: url("paperContainerEmpty.png");
     background-position: center center;
 
     background-size: contain;

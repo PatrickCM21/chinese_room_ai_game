@@ -1,4 +1,4 @@
-import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay, pointerWithin } from '@dnd-kit/core'
+import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay, pointerWithin, MeasuringStrategy } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
@@ -17,7 +17,8 @@ const orderAnswerContainer = {
     ORDER: 0,
     ANSWER: 1,
     STAPLER: 2,
-    FINISHED: 3
+    FINISHED: 3,
+    BIN: 4
 }
 
 const characterContainer = {
@@ -77,6 +78,10 @@ export default function Desk() {
                 answer: null,  
             }
         ]
+        },
+        {
+        id: "bin",
+        items: []
         }
     ])
     
@@ -89,12 +94,16 @@ export default function Desk() {
     const dictionaryImg = React.useRef(null)
     const ruleBookUIRef = React.useRef(null)
     const ruleBookImg = React.useRef(null)
+    const paperContainerImg = React.useRef(null)
+    const binImg = React.useRef(null)
     const outputSidebar = React.useRef(null)
+    const staplerUIRef = React.useRef(null)
+    const [staplerOpen, setStaplerOpen] = React.useState(false)
     const [holdingOutput, setHoldingOutput] = React.useState(false)
     const [showOutput, setShowOutput] = React.useState(false)
     const [hoverDropped, setHoverDropped] = React.useState(false)
     const [hoverDroppedItem, setHoverDroppedItem] = React.useState(null)
-
+    const [key, setKey] = React.useState(0);
     
 
     // Show the sidebar when paper is brought to it
@@ -404,21 +413,16 @@ export default function Desk() {
         const activeContainerId = findPaperContainerId(activeId)
         const activeContainerIndex = orderAnswer.findIndex(c => c.id === activeContainerId)
         console.log(activeId)
-        console.log(orderAnswer)
-        console.log(orderAnswer[activeContainerIndex])
+        console.log(over)
         const activeObj = orderAnswer[activeContainerIndex].items.find(item => item.id === activeId)
-
-
 
         if (!over) {
             if (hoverDropped) {
                 console.log("triggered hover drop")
                 setOrderAnswer(prev => {
                     return prev.map(container => {
-                        if (container.id === 'stapler') {
+                        if (activeContainerId === 'stapler' && container.id === 'stapler') {
                             const addedItem = container.items.find(item => item.id === activeId)
-                            console.log(addedItem)
-                            console.log(hoverDroppedItem)
                             let itemList;
                             if (hoverDroppedItem) {
                                 itemList = 
@@ -434,6 +438,15 @@ export default function Desk() {
                                 items: itemList
                             }
                         } 
+
+                        if (activeContainerId === 'bin' && container.id === 'bin') {
+                            binImg.current.style.backgroundImage = 'url(binEmpty.png)'
+                            return {
+                                ...container,
+                                items: [
+                                ]
+                            }
+                        }
 
                         if (container.id === activeObj.type) {
                             let itemList;
@@ -480,7 +493,7 @@ export default function Desk() {
 
         setOrderAnswer(prev => {
             return prev.map(container => {
-                if (container.id === 'stapler') {
+                if (overContainerId === 'stapler' && container.id === 'stapler') {
                     const existingItem = container.items.find(item => item.type === activeContainerId)
                     const itemList = existingItem ? 
                         [...container.items.filter(item => item.id !== existingItem.id),
@@ -496,8 +509,26 @@ export default function Desk() {
                     }
                 } 
 
+                if (overContainerId === 'bin' && container.id === 'bin') {
+                    binImg.current.style.backgroundImage = 'url(bin.png)'
+                    setHoverDropped(true)
+                    setHoverDroppedItem(null)
+                    return {
+                        ...container,
+                        items: [
+                            activeObj
+                        ]
+                    }
+                }
+
                 if (container.id === activeContainerId) {
-                    const existingItem = prev[orderAnswerContainer.STAPLER].items.find(item => item.type === activeContainerId)
+                    let existingItem
+                    if (overContainerId === 'stapler') {
+                        existingItem = prev[orderAnswerContainer.STAPLER].items.find(item => item.type === activeContainerId)
+                    } else {
+                        existingItem = null
+                    }
+                    
                     const itemList = existingItem ? 
                         [...container.items.filter(item => item.id !== activeId),
                         existingItem
@@ -520,7 +551,30 @@ export default function Desk() {
         setActiveId(null)
         setHoverDropped(false)
         setHoverDroppedItem(null)
+        binImg.current.style.backgroundImage = 'url(binEmpty.png)'
+        
 
+        if (orderAnswer[orderAnswerContainer.BIN].items > 0) {
+            setOrderAnswer(prev => {
+                return prev.map((c) => {
+                    if (c.id === 'bin') {
+                        return {id: 'bin', items: []}
+                    } else {
+                        return c
+                    }
+                })
+            })
+        }
+
+    }
+
+    const handleTransitionEnd = () => {
+        // wait a tick so layout settles
+        requestAnimationFrame(() => measureDroppableContainers());
+    };
+
+    function openStapler() {
+        setStaplerOpen(prev => !prev)
     }
 
     return (
@@ -540,28 +594,38 @@ export default function Desk() {
 
                     {answerList}
                 </div>
-                <div className={`output ${showOutput ? 'output-display' : ''}`} ref={outputSidebar}>
-                    <div className='bin'>
-                        <Droppable id='bin' className='sidebar-container'>
+                <div 
+                    className={`output ${showOutput ? 'output-display' : ''}`} 
+                    ref={outputSidebar}
+                    onTransitionEnd={() => setKey(k => k + 1)}
+                >
+                    <div className='bin' ref={binImg}>
+                        <Droppable key={`bin-${key}`} id='bin' className='sidebar-container' >
 
                         </Droppable>
                         
                     </div>
-                    <div className='paper-container'>
-                        <Droppable id='paper-container' className='sidebar-container'>
+                    <div className='paper-container' ref={paperContainerImg}>
+                        <Droppable key={`paper-${key}`} id='paper-container' className='sidebar-container'>
                             
                         </Droppable>
                         
                     </div>
                     
                 </div>
-                <div className='stapler'>
+                <button className='stapler' onClick={openStapler}>
                     <img src='stapler.png' alt='stapler button'></img>
 
-                    <Droppable id='stapler' className='stapler-ui'>
+
+                    <Droppable 
+                        id='stapler' 
+                        className='stapler-ui' 
+                        ref={staplerUIRef}
+                        style={staplerOpen ? {} : {display: 'none'}}
+                        >
                         {staplerItemsElements}
                     </Droppable>
-                </div>
+                </button>
                 <DragOverlay
                     > 
                     {activeId ? (
