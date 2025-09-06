@@ -100,6 +100,20 @@
 
 }
 
+.response {
+    background-image: url("response.png");
+    background-size: contain;
+    width: 29vh;
+    height: 29vh;
+    padding: 20px;
+
+
+    cursor: grab;
+
+    font-size: 20px;
+
+}
+
 .order > span {
     display: block;
     padding-bottom: 3px;
@@ -209,8 +223,51 @@
     padding:6px;
     
     width: 50vh; 
-    height: 30vh; 
+    height: 220px; 
     cursor: grab;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rule {
+    border-bottom: 1px solid black;
+    padding-bottom: 3px;
+}
+
+.rule > span {
+    display: block;
+}
+
+.rulebook-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+
+    position:absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-bottom: 8px;
+}
+
+.rulebook-btns > button {
+    width: 22px;
+    height: 22px;
+    border: 1px solid black;
+    border-radius: 5px;
+
+
+}
+
+.active-btn {
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    inset: 1px;
 }
 
 .dictionary {
@@ -273,3 +330,5 @@
     grid-area: rules;
 
 }
+
+

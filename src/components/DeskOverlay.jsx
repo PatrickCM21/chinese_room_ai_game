@@ -1,0 +1,453 @@
+import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay, pointerWithin, MeasuringStrategy } from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import React from 'react'
+import { v4 as newId } from 'uuid';
+
+import { useWindowWidth } from '@react-hook/window-size'
+
+
+import Order from './Order.jsx';
+import Answer from './Answer';
+import Droppable from './Droppable';
+
+import Response from './Response.jsx'
+
+export default function DeskOverlay({orderAnswerArr}) {
+    const orderAnswerContainer = {
+    ORDER: 0,
+    ANSWER: 1,
+    STAPLER: 2,
+    RESPONSES: 3,
+    BIN: 4
+}   
+    const windowWidth = useWindowWidth();
+    const [ orderAnswer, setOrderAnswer ] = orderAnswerArr;
+
+
+    
+    const [key, setKey] = React.useState(0);
+    const paperContainerImg = React.useRef(null)
+    const binImg = React.useRef(null)
+    const outputSidebar = React.useRef(null)
+    const staplerUIRef = React.useRef(null)
+    const [staplerOpen, setStaplerOpen] = React.useState(false)
+    const [holdingOutput, setHoldingOutput] = React.useState(false)
+    const [showOutput, setShowOutput] = React.useState(false)
+    const [hoverDropped, setHoverDropped] = React.useState(false)
+    const [hoverDroppedItem, setHoverDroppedItem] = React.useState(null)
+    const [activeId, setActiveId] = React.useState(null)
+        
+
+    React.useEffect(() => {
+        const checkMousePosition = (e) => {
+            if (holdingOutput) {
+
+                if (e.clientX > (windowWidth * 0.6)) {
+                    setShowOutput(true)
+                } else {
+                    setShowOutput(false)
+                }
+            }
+        }
+        window.addEventListener('mousemove', checkMousePosition)
+
+        return () => {
+            window.removeEventListener('mousemove', checkMousePosition)
+            setShowOutput(false)
+
+        }
+    }, [holdingOutput])
+
+    const orderList = orderAnswer.find(container => container.id === 'orders').items.map(order => {
+        return <Order id={order.id} key={order.id}>
+            {order.text}
+        </Order>
+    })
+
+    const answerList = orderAnswer.find(container => container.id === 'answers').items.map(answer => {
+        return <Answer id={answer.id} key={answer.id}>
+            {answer.text}
+        </Answer>
+    })
+
+    const responsesList = orderAnswer.find(container => container.id === 'responses').items.map(response => {
+        return <Response id={response.id} key={response.id}  />
+
+    })
+
+    
+    const staplerItems = orderAnswer[orderAnswerContainer.STAPLER]
+    const orderItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'orders')
+    const answerItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'answers')
+    const staplerItemsElements = (
+        <>
+            <div className='stapler-drop'>
+                {orderItem ? 
+                <div>{orderItem.text}</div>
+                : <span>Place your order's here!</span>}
+            </div>
+            <div className='stapler-drop'>
+                {answerItem ? 
+                <div>{answerItem.text}</div>
+                : <span>Place your answer's here!</span>}
+            </div>
+            {orderItem && answerItem ? 
+            <button className='stapler-btn' onClick={createResponse}>Staple</button>
+            : null}
+        </>
+    )
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8
+            }
+        }),
+        useSensor(KeyboardSensor)
+    )
+
+    function findPaperContainerId(itemId) {
+        if (orderAnswer.some(container => container.id === itemId)) {
+            return itemId
+        }
+        return orderAnswer.find(container => 
+            container.items.some((item) => item.id === itemId)
+        )?.id;
+    }
+
+    const getActiveItem = () => {
+        let item;
+        
+        for (const container of orderAnswer) {
+            item = container.items.find(item => item.id === activeId)
+            if (item) return item
+        }
+        return null
+    }
+    function PaperOverlay({ children, className }) {
+        return (
+            <div className={className}>
+                {children.type === 'orders' ? <span>Please Respond:</span>: null}
+                {children.type !== 'responses' ? children.text: null}
+            </div>
+        )
+    }
+    
+    function createAnswer() {
+        if (characters[characterContainer.PAPER].items.length === 0) return;
+        setOrderAnswer(prev => {
+            return prev.map(container => {
+                if (container.id !== 'answers') return container
+                return {
+                    ...container,
+                    items: [
+                        ...container.items,
+                        {
+                            id: newId(),
+                            text: collectCharacters(characters[characterContainer.PAPER].items)
+                        }
+                    ]
+                }
+            })
+
+        })
+        resetPaper()
+    }
+
+    function createResponse() {
+        setOrderAnswer(prev => {
+            return prev.map(c => {
+                if (c.id === 'stapler') {
+                    return {
+                        ...c,
+                        items: []
+                    }
+                }
+                if (c.id === 'responses') {
+                    return {
+                        ...c,
+                        items: [
+                            ...c.items,
+                            {
+                                id: newId(),
+                                order: orderItem.text,
+                                answer: answerItem.text 
+                            }
+                        ]
+                    }
+                }
+                return c
+            })
+        })
+    }
+
+    function handleNotesDragStart({ active, over }) {
+        setHoldingOutput(true)
+
+        setActiveId(active.id)
+    }
+
+    function handleNotesDragOver(event) {
+        const { active, over } = event;
+
+        const activeId = active.id;
+        const activeContainerId = findPaperContainerId(activeId)
+        const activeContainerIndex = orderAnswer.findIndex(c => c.id === activeContainerId)
+        console.log(activeId)
+        console.log(over)
+        const activeObj = orderAnswer[activeContainerIndex].items.find(item => item.id === activeId)
+
+        if (!over) {
+            if (hoverDropped) {
+                console.log("triggered hover drop")
+                console.log(activeObj)
+                            console.log("hover dropped is")
+                            console.log(hoverDroppedItem)
+                setOrderAnswer(prev => {
+                    return prev.map(container => {
+                        if (activeContainerId === 'stapler' && container.id === 'stapler') {
+                            const addedItem = container.items.find(item => item.id === activeId)
+                            let itemList;
+                            if (hoverDroppedItem) {
+                                itemList = 
+                                [...container.items.filter(item => item.id !== addedItem.id),
+                                hoverDroppedItem
+                                ]
+                            } else {
+                                itemList = [...container.items.filter(item => item.id !== addedItem.id)]
+                            }
+                            
+                            return  {
+                                ...container,
+                                items: itemList
+                            }
+                        } 
+
+                        if (activeContainerId === 'bin' && container.id === 'bin') {
+                            console.log("removed paper from bin")
+
+                            binImg.current.style.backgroundImage = 'url(binEmpty.png)'
+                            return {
+                                ...container,
+                                items: [
+                                ]
+                            }
+                        }
+
+                        if (activeContainerId === 'responses' && container.id === 'responses') {
+                            console.log("removed paper from container")
+                            paperContainerImg.current.style.backgroundImage = 'url(paperContainerEmpty.png)'
+                            return {
+                                ...container,
+                                items: [
+                                ]
+                            }
+                        }
+
+                        if (container.id === activeObj.type) {
+                            let itemList;
+                            
+                            if (hoverDroppedItem) {
+                                itemList = [...container.items.filter(item => item.id !== hoverDroppedItem.id), activeObj]
+                            } else {
+                                itemList = [...container.items, activeObj]
+                            }
+                            return {
+                                ...container,
+                                items: itemList
+                            }
+                            
+                        }
+                        return container;
+                    })
+
+                })
+                setHoverDropped(false)
+                setHoverDroppedItem(null)
+
+            }
+            return;
+
+        } 
+
+        const overId = over.id;
+
+        console.log("active : " + activeId)
+        console.log("over : " + overId)
+
+        const overContainerId = findPaperContainerId(overId)
+
+        console.log("active cont: " + activeContainerId)
+        console.log("over cont: " + overContainerId)
+        
+        if (!activeContainerId || !overContainerId) return;
+
+        if (activeContainerId === overContainerId) return;
+
+        setOrderAnswer(prev => {
+            return prev.map(container => {
+                if (overContainerId === 'stapler' && container.id === 'stapler') {
+                    const existingItem = container.items.find(item => item.type === activeContainerId)
+                    const itemList = existingItem ? 
+                        [...container.items.filter(item => item.id !== existingItem.id),
+                            {...activeObj, type: activeContainerId}
+                        ]
+                        : [...container.items, {...activeObj, type: activeContainerId}]
+                    setHoverDropped(true)
+                    setHoverDroppedItem(existingItem)
+                    
+                    return  {
+                        ...container,
+                        items: itemList
+                    }
+                } 
+
+                if (overContainerId === 'bin' && container.id === 'bin') {
+                    binImg.current.style.backgroundImage = 'url(bin.png)'
+                    setHoverDropped(true)
+                    setHoverDroppedItem(null)
+                    return {
+                        ...container,
+                        items: [
+                            activeObj
+                        ]
+                    }
+                }
+
+                if (overContainerId === 'responses' && container.id === 'responses') {
+                    paperContainerImg.current.style.backgroundImage = 'url(paperContainer.png)'
+                    setHoverDropped(true)
+                    setHoverDroppedItem(null)
+                    return {
+                        ...container,
+                        items: [
+                            activeObj
+                        ]
+                    }
+                }
+
+                if (container.id === activeContainerId) {
+                    let existingItem
+                    if (overContainerId === 'stapler') {
+                        existingItem = prev[orderAnswerContainer.STAPLER].items.find(item => item.type === activeContainerId)
+                    } else {
+                        existingItem = null
+                    }
+                    
+                    const itemList = existingItem ? 
+                        [...container.items.filter(item => item.id !== activeId),
+                        existingItem
+                        ]
+                        : [...container.items.filter(item => item.id !== activeId)]
+                    return {
+                        ...container,
+                        items: itemList
+                    }
+                    
+                }
+                return container;
+            })
+        })
+
+    }
+
+    function handleNotesDragEnd({ active, over }) {
+        setHoldingOutput(false)
+        setActiveId(null)
+        setHoverDropped(false)
+        setHoverDroppedItem(null)
+        binImg.current.style.backgroundImage = 'url(binEmpty.png)'
+        
+
+        if (orderAnswer[orderAnswerContainer.BIN].items > 0) {
+            setOrderAnswer(prev => {
+                return prev.map((c) => {
+                    if (c.id === 'bin') {
+                        return {id: 'bin', items: []}
+                    } else {
+                        return c
+                    }
+                })
+            })
+        }
+
+        if (orderAnswer[orderAnswerContainer.RESPONSES].items > 0) {
+            processResponse()
+        }
+
+    }
+
+    function processResponse() {
+
+    }
+    function openStapler() {
+        setStaplerOpen(prev => !prev)
+    }
+
+    return (
+        <DndContext
+            collisionDetection={pointerWithin}
+            sensors={sensors}
+            modifiers={[restrictToWindowEdges]}  
+            autoScroll={false}
+            onDragStart={handleNotesDragStart}
+            onDragMove={handleNotesDragOver}
+            onDragEnd={handleNotesDragEnd}
+        >
+            <div>
+                {orderList}
+
+                {answerList}
+
+                {responsesList}
+            </div>
+            <div 
+                className={`output ${showOutput ? 'output-display' : ''}`} 
+                ref={outputSidebar}
+                onTransitionEnd={() => setKey(k => k + 1)}
+            >
+                <div className='bin' ref={binImg}>
+                    <Droppable key={`bin-${key}`} id='bin' className='sidebar-container' >
+
+                    </Droppable>
+                    
+                </div>
+                <div className='paper-container' ref={paperContainerImg}>
+                    <Droppable key={`paper-${key}`} id='responses' className='sidebar-container'>
+                        
+                    </Droppable>
+                    
+                </div>
+                
+            </div>
+            <button className='stapler' onClick={openStapler}>
+                <img src='stapler.png' alt='stapler button'></img>
+
+
+                <Droppable 
+                    id='stapler' 
+                    className='stapler-ui' 
+                    ref={staplerUIRef}
+                    style={staplerOpen ? {} : {display: 'none'}}
+                    >
+                    {staplerItemsElements}
+                </Droppable>
+            </button>
+            <DragOverlay
+                > 
+                {activeId ? (
+                <PaperOverlay 
+                    className={
+                        getActiveItem().id === 'responses' ? 'response'
+                        : getActiveItem().id === 'orders' ? 'paper order'
+                        : 'paper answer'
+                        }>
+                    {getActiveItem()}
+                </PaperOverlay>
+                ): null}
+            </DragOverlay>
+        
+        </DndContext>
+    )
+}

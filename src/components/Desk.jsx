@@ -1,23 +1,19 @@
-import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay, pointerWithin, MeasuringStrategy } from '@dnd-kit/core'
+import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
 import { v4 as newId } from 'uuid';
 
-import { useWindowWidth } from '@react-hook/window-size'
-
 import DictionaryUI from './DictionaryUI'
 import PaperDroppable from './PaperDroppable';
-import Order from './Order.jsx';
-import Answer from './Answer';
-import Droppable from './Droppable';
 import RuleBook from './RuleBook';
+import DeskOverlay from './DeskOverlay.jsx';
 
 const orderAnswerContainer = {
     ORDER: 0,
     ANSWER: 1,
     STAPLER: 2,
-    FINISHED: 3,
+    RESPONSES: 3,
     BIN: 4
 }
 
@@ -28,9 +24,6 @@ const characterContainer = {
 
 
 export default function Desk() {
-    const windowWidth = useWindowWidth();
-
-
     const [characters, setCharacters] = React.useState([{
         id: "dictionary",
         items: [
@@ -39,7 +32,8 @@ export default function Desk() {
             {id: 3 , character: "中"},
             {id: 4 , character: "文"},
             {id: 7 , character: "马"},
-            {id: 8 , character: "马"},
+            {id: 8 , character: "会"},
+            {id: 9 , character: "说"},
         ]
         },
         {
@@ -70,12 +64,13 @@ export default function Desk() {
         ]
         },
         {
-        id: "finished",
+        id: "responses",
         items: [
             {
                 id: 14,
-                order: null,
-                answer: null,  
+                order: "你你你",
+                answer: "你你你",  
+                type: 'responses'
             }
         ]
         },
@@ -84,8 +79,63 @@ export default function Desk() {
         items: []
         }
     ])
-    
 
+    const [rules, setRules] = React.useState({
+        inactive: [
+            {
+                id: 1,
+                order: "你",
+                answer: "我"
+            }
+        ],
+        active: [
+            {
+                id: 2,
+                order: "你好马",
+                answer: "很好"
+            },
+            {
+                id: 3,
+                order: "你说中文吗",
+                answer: "我会说中文"
+            },
+            {
+                id: 5,
+                order: "你好马",
+                answer: "很好"
+            },
+            {
+                id: 4,
+                order: "你说吗",
+                answer: "我会说文"
+            },
+            {
+                id: 6,
+                order: "马",
+                answer: "很好"
+            },
+            {
+                id: 7,
+                order: "你说中文吗",
+                answer: "我会说"
+            },
+            {
+                id: 8,
+                order: "你",
+                answer: "很"
+            },
+            {
+                id: 9,
+                order: "文吗",
+                answer: "我会说中文"
+            },
+            {
+                id: 9,
+                order: "文说中文",
+                answer: "我会说中文"
+            }
+        ]
+    })
 
     
     const [activeId, setActiveId] = React.useState(null)
@@ -94,72 +144,8 @@ export default function Desk() {
     const dictionaryImg = React.useRef(null)
     const ruleBookUIRef = React.useRef(null)
     const ruleBookImg = React.useRef(null)
-    const paperContainerImg = React.useRef(null)
-    const binImg = React.useRef(null)
-    const outputSidebar = React.useRef(null)
-    const staplerUIRef = React.useRef(null)
-    const [staplerOpen, setStaplerOpen] = React.useState(false)
-    const [holdingOutput, setHoldingOutput] = React.useState(false)
-    const [showOutput, setShowOutput] = React.useState(false)
-    const [hoverDropped, setHoverDropped] = React.useState(false)
-    const [hoverDroppedItem, setHoverDroppedItem] = React.useState(null)
-    const [key, setKey] = React.useState(0);
     
 
-    // Show the sidebar when paper is brought to it
-    React.useEffect(() => {
-        const checkMousePosition = (e) => {
-            if (holdingOutput) {
-
-                if (e.clientX > (windowWidth * 0.6)) {
-                    setShowOutput(true)
-                } else {
-                    setShowOutput(false)
-                }
-            }
-        }
-        window.addEventListener('mousemove', checkMousePosition)
-
-        return () => {
-            window.removeEventListener('mousemove', checkMousePosition)
-            setShowOutput(false)
-
-        }
-    }, [holdingOutput])
-
-    const orderList = orderAnswer.find(container => container.id === 'orders').items.map(order => {
-        return <Order id={order.id}>
-            {order.text}
-        </Order>
-    })
-
-    const answerList = orderAnswer.find(container => container.id === 'answers').items.map(order => {
-        return <Answer id={order.id}>
-            {order.text}
-        </Answer>
-    })
-
-    
-    const staplerItems = orderAnswer[orderAnswerContainer.STAPLER]
-    const orderItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'orders')
-    const answerItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'answers')
-    const staplerItemsElements = (
-        <>
-            <div className='stapler-drop'>
-                {orderItem ? 
-                <div>{orderItem.text}</div>
-                : <span>Place your order's here!</span>}
-            </div>
-            <div className='stapler-drop'>
-                {answerItem ? 
-                <div>{answerItem.text}</div>
-                : <span>Place your answer's here!</span>}
-            </div>
-            {orderItem && answerItem ? 
-            <button className='stapler-btn' onClick={createResponse}>Staple</button>
-            : null}
-        </>
-    )
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -205,14 +191,6 @@ export default function Desk() {
         )?.id;
     }
 
-    function findPaperContainerId(itemId) {
-        if (orderAnswer.some(container => container.id === itemId)) {
-            return itemId
-        }
-        return orderAnswer.find(container => 
-            container.items.some((item) => item.id === itemId)
-        )?.id;
-    }
 
     const getActiveItem = () => {
         let item;
@@ -221,10 +199,6 @@ export default function Desk() {
             item.id === activeId
         )
         if (item) return item
-        }
-        for (const container of orderAnswer) {
-            item = container.items.find(item => item.id === activeId)
-            if (item) return item
         }
         return null
     }
@@ -341,14 +315,6 @@ export default function Desk() {
         )
     }
 
-    function PaperOverlay({ children, className }) {
-        return (
-            <div className={`${className} ${children.type === 'orders' ? 'order' : 'answer'}`}>
-                {children.type === 'orders' ? <span>Please Respond:</span>: null}
-                {children.text}
-            </div>
-        )
-    }
 
     function resetPaper() {
         setCharacters(containers => {
@@ -396,246 +362,10 @@ export default function Desk() {
         resetPaper()
     }
 
-    function createResponse() {
-
-    }
-
-    function handleNotesDragStart({ active, over }) {
-        setHoldingOutput(true)
-
-        setActiveId(active.id)
-    }
-
-    function handleNotesDragOver(event) {
-        const { active, over } = event;
-
-        const activeId = active.id;
-        const activeContainerId = findPaperContainerId(activeId)
-        const activeContainerIndex = orderAnswer.findIndex(c => c.id === activeContainerId)
-        console.log(activeId)
-        console.log(over)
-        const activeObj = orderAnswer[activeContainerIndex].items.find(item => item.id === activeId)
-
-        if (!over) {
-            if (hoverDropped) {
-                console.log("triggered hover drop")
-                setOrderAnswer(prev => {
-                    return prev.map(container => {
-                        if (activeContainerId === 'stapler' && container.id === 'stapler') {
-                            const addedItem = container.items.find(item => item.id === activeId)
-                            let itemList;
-                            if (hoverDroppedItem) {
-                                itemList = 
-                                [...container.items.filter(item => item.id !== addedItem.id),
-                                hoverDroppedItem
-                                ]
-                            } else {
-                                itemList = [...container.items.filter(item => item.id !== addedItem.id)]
-                            }
-                            
-                            return  {
-                                ...container,
-                                items: itemList
-                            }
-                        } 
-
-                        if (activeContainerId === 'bin' && container.id === 'bin') {
-                            binImg.current.style.backgroundImage = 'url(binEmpty.png)'
-                            return {
-                                ...container,
-                                items: [
-                                ]
-                            }
-                        }
-
-                        if (container.id === activeObj.type) {
-                            let itemList;
-                            console.log(activeObj)
-                            if (hoverDroppedItem) {
-                                itemList = [...container.items.filter(item => item.id !== hoverDroppedItem.id), activeObj]
-                            } else {
-                                itemList = [...container.items, activeObj]
-                            }
-                            return {
-                                ...container,
-                                items: itemList
-                            }
-                            
-                        }
-                        return container;
-                    })
-
-                })
-                setHoverDropped(false)
-                setHoverDroppedItem(null)
-
-            }
-            return;
-
-        } 
-
-        const overId = over.id;
-
-        console.log("active : " + activeId)
-        console.log("over : " + overId)
-
-        const overContainerId = findPaperContainerId(overId)
-
-        const overContainerIndex = orderAnswer.findIndex(c => c.id === overContainerId)
-
-
-        console.log("active cont: " + activeContainerId)
-        console.log("over cont: " + overContainerId)
-        
-        if (!activeContainerId || !overContainerId) return;
-
-        if (activeContainerId === overContainerId) return;
-
-        setOrderAnswer(prev => {
-            return prev.map(container => {
-                if (overContainerId === 'stapler' && container.id === 'stapler') {
-                    const existingItem = container.items.find(item => item.type === activeContainerId)
-                    const itemList = existingItem ? 
-                        [...container.items.filter(item => item.id !== existingItem.id),
-                            {...activeObj, type: activeContainerId}
-                        ]
-                        : [...container.items, {...activeObj, type: activeContainerId}]
-                    setHoverDropped(true)
-                    setHoverDroppedItem(existingItem)
-                    
-                    return  {
-                        ...container,
-                        items: itemList
-                    }
-                } 
-
-                if (overContainerId === 'bin' && container.id === 'bin') {
-                    binImg.current.style.backgroundImage = 'url(bin.png)'
-                    setHoverDropped(true)
-                    setHoverDroppedItem(null)
-                    return {
-                        ...container,
-                        items: [
-                            activeObj
-                        ]
-                    }
-                }
-
-                if (container.id === activeContainerId) {
-                    let existingItem
-                    if (overContainerId === 'stapler') {
-                        existingItem = prev[orderAnswerContainer.STAPLER].items.find(item => item.type === activeContainerId)
-                    } else {
-                        existingItem = null
-                    }
-                    
-                    const itemList = existingItem ? 
-                        [...container.items.filter(item => item.id !== activeId),
-                        existingItem
-                        ]
-                        : [...container.items.filter(item => item.id !== activeId)]
-                    return {
-                        ...container,
-                        items: itemList
-                    }
-                    
-                }
-                return container;
-            })
-        })
-
-    }
-
-    function handleNotesDragEnd({ active, over }) {
-        setHoldingOutput(false)
-        setActiveId(null)
-        setHoverDropped(false)
-        setHoverDroppedItem(null)
-        binImg.current.style.backgroundImage = 'url(binEmpty.png)'
-        
-
-        if (orderAnswer[orderAnswerContainer.BIN].items > 0) {
-            setOrderAnswer(prev => {
-                return prev.map((c) => {
-                    if (c.id === 'bin') {
-                        return {id: 'bin', items: []}
-                    } else {
-                        return c
-                    }
-                })
-            })
-        }
-
-    }
-
-    const handleTransitionEnd = () => {
-        // wait a tick so layout settles
-        requestAnimationFrame(() => measureDroppableContainers());
-    };
-
-    function openStapler() {
-        setStaplerOpen(prev => !prev)
-    }
 
     return (
         <>
-
-            <DndContext
-                collisionDetection={pointerWithin}
-                sensors={sensors}
-                modifiers={[restrictToWindowEdges]}  
-                autoScroll={false}
-                onDragStart={handleNotesDragStart}
-                onDragMove={handleNotesDragOver}
-                onDragEnd={handleNotesDragEnd}
-            >
-                <div>
-                    {orderList}
-
-                    {answerList}
-                </div>
-                <div 
-                    className={`output ${showOutput ? 'output-display' : ''}`} 
-                    ref={outputSidebar}
-                    onTransitionEnd={() => setKey(k => k + 1)}
-                >
-                    <div className='bin' ref={binImg}>
-                        <Droppable key={`bin-${key}`} id='bin' className='sidebar-container' >
-
-                        </Droppable>
-                        
-                    </div>
-                    <div className='paper-container' ref={paperContainerImg}>
-                        <Droppable key={`paper-${key}`} id='paper-container' className='sidebar-container'>
-                            
-                        </Droppable>
-                        
-                    </div>
-                    
-                </div>
-                <button className='stapler' onClick={openStapler}>
-                    <img src='stapler.png' alt='stapler button'></img>
-
-
-                    <Droppable 
-                        id='stapler' 
-                        className='stapler-ui' 
-                        ref={staplerUIRef}
-                        style={staplerOpen ? {} : {display: 'none'}}
-                        >
-                        {staplerItemsElements}
-                    </Droppable>
-                </button>
-                <DragOverlay
-                    > 
-                    {activeId ? (
-                    <PaperOverlay className='paper'>
-                        {getActiveItem()}
-                    </PaperOverlay>
-                    ): null}
-                </DragOverlay>
-            
-            </DndContext>
+            <DeskOverlay orderAnswerArr = {[orderAnswer, setOrderAnswer]} />
 
             <section id='desk'>
                 {/* Gives space for the image which is used above */}
@@ -681,6 +411,7 @@ export default function Desk() {
                 <RuleBook
                     startPos={{x: 150, y: 150}} 
                     ref={ruleBookUIRef}
+                    rules={rules}
                 />
 
                 <DragOverlay
