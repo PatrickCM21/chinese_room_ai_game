@@ -1,0 +1,15 @@
+.popups {
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: rgba(0.1, 0.1, 0.1, 0.2);
+
+}
+
+.popup {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+
+}

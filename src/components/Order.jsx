@@ -8,6 +8,7 @@ export default function Order({ children, id }) {
             startPos={{x: 120, y: 120}}
             className='paper-ui'
         >
+            
             <article className='paper order'>
                 <span>Please Respond:</span>
                 {children}

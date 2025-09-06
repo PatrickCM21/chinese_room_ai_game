@@ -1,4 +1,4 @@
-import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core'
+import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay, pointerWithin } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
@@ -8,13 +8,16 @@ import { useWindowWidth } from '@react-hook/window-size'
 
 import DictionaryUI from './DictionaryUI'
 import PaperDroppable from './PaperDroppable';
-import Order from './oRDER.JSX';
+import Order from './Order.jsx';
 import Answer from './Answer';
 import Droppable from './Droppable';
+import RuleBook from './RuleBook';
 
 const orderAnswerContainer = {
     ORDER: 0,
-    ANSWER: 1
+    ANSWER: 1,
+    STAPLER: 2,
+    FINISHED: 3
 }
 
 const characterContainer = {
@@ -35,6 +38,7 @@ export default function Desk() {
             {id: 3 , character: "中"},
             {id: 4 , character: "文"},
             {id: 7 , character: "马"},
+            {id: 8 , character: "马"},
         ]
         },
         {
@@ -45,33 +49,56 @@ export default function Desk() {
         ]
     }])
 
-    const [orderAnswer, setOrderAnswer] = React.useState([{
+    const [orderAnswer, setOrderAnswer] = React.useState([
+        {
         id: "orders",
         items: [
             {id: 1 , text: "你好马"},
         ]
         },
-
         {
         id: "answers",
         items: [
-            {id: 5 , text: "好"},
+            {id: 2 , text: "好"},
         ]
-    }])
+        },
+        {
+        id: "stapler",
+        items: [
+            {id: 3 , text: "你你你", type: 'orders'}
+        ]
+        },
+        {
+        id: "finished",
+        items: [
+            {
+                id: 4,
+                order: null,
+                answer: null,  
+            }
+        ]
+        }
+    ])
+    
+
 
     
     const [activeId, setActiveId] = React.useState(null)
     const [parentDisabled, setParentDisabled] = React.useState(false)
     const dictionaryUIRef = React.useRef(null)
     const dictionaryImg = React.useRef(null)
+    const ruleBookUIRef = React.useRef(null)
+    const ruleBookImg = React.useRef(null)
     const outputSidebar = React.useRef(null)
     const [holdingOutput, setHoldingOutput] = React.useState(false)
     const [showOutput, setShowOutput] = React.useState(false)
 
+    
+
+    // Show the sidebar when paper is brought to it
     React.useEffect(() => {
         const checkMousePosition = (e) => {
             if (holdingOutput) {
-            console.log(outputSidebar.current)
 
                 if (e.clientX > (windowWidth * 0.6)) {
                     setShowOutput(true)
@@ -101,6 +128,28 @@ export default function Desk() {
         </Answer>
     })
 
+
+    const staplerItems = orderAnswer[orderAnswerContainer.STAPLER]
+    const orderItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'orders')
+    const answerItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'answers')
+    const staplerItemsElements = (
+        <>
+            <div className='stapler-drop'>
+                {orderItem ? 
+                <div>{orderItem.text}</div>
+                : <span>Place your order's here!</span>}
+            </div>
+            <div className='stapler-drop'>
+                {answerItem ? 
+                <div>{answerItem.text}</div>
+                : <span>Place your answer's here!</span>}
+            </div>
+            {orderItem && answerItem ? 
+            <button className='stapler-btn' onClick={createResponse}>Staple</button>
+            : null}
+        </>
+    )
+
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -123,8 +172,20 @@ export default function Desk() {
     }
 
     
+    function openRuleBook() {
+        const ruleBookEl = ruleBookUIRef.current;
+        if (!ruleBookEl.style.visibility || ruleBookEl.style.visibility === "hidden") {
+            ruleBookEl.style.visibility = "visible"
+            ruleBookImg.current.src= "rulesOpen.png"
+        } else {
+            ruleBookEl.style.visibility = "hidden"
+            ruleBookImg.current.src= "rules.png"
 
-    function findContainerId(itemId) {
+        }
+    }
+    
+
+    function findCharacterContainerId(itemId) {
         if (characters.some(container => container.id === itemId)) {
             return itemId
         }
@@ -132,8 +193,16 @@ export default function Desk() {
             container.items.some((item) => item.id === itemId)
         )?.id;
     }
-    
-    
+
+    function findPaperContainerId(itemId) {
+        if (orderAnswer.some(container => container.id === itemId)) {
+            return itemId
+        }
+        return orderAnswer.find(container => 
+            container.items.some((item) => item.id === itemId)
+        )?.id;
+    }
+
     const getActiveItem = () => {
         for (const container of characters) {
         const item = container.items.find(item => 
@@ -143,7 +212,6 @@ export default function Desk() {
         }
         return null
     }
-
 
     function handleDragStart(event) {
         setActiveId(event.active.id)
@@ -157,8 +225,8 @@ export default function Desk() {
         const activeId = active.id;
         const overId = over.id;
 
-        const activeContainerId = findContainerId(activeId)
-        const overContainerId = findContainerId(overId)
+        const activeContainerId = findCharacterContainerId(activeId)
+        const overContainerId = findCharacterContainerId(overId)
 
         
         if (!activeContainerId || !overContainerId) return;
@@ -216,8 +284,8 @@ export default function Desk() {
             return;
         }
 
-        const prevContainer = findContainerId(active.id);
-        const newContainer = findContainerId(over.id)
+        const prevContainer = findCharacterContainerId(active.id);
+        const newContainer = findCharacterContainerId(over.id)
         if (!prevContainer || !newContainer) return;
 
         if (prevContainer === newContainer && active.id !== over.id) {
@@ -304,12 +372,79 @@ export default function Desk() {
         console.log(orderAnswer)
     }
 
+    function createResponse() {
+        
+    }
+
     function handleNotesDragStart() {
         setHoldingOutput(true)
     }
 
-    function handleNotesDragHover() {
-        console.log("over")
+    function handleNotesDragHover(event) {
+        const { active, over } = event;
+
+        if (!over) return;
+
+        const activeId = active.id;
+        const overId = over.id;
+
+        console.log("active : " + activeId)
+        console.log("over : " + overId)
+
+        const activeContainerId = findPaperContainerId(activeId)
+        const overContainerId = findPaperContainerId(overId)
+
+        const activeContainerIndex = orderAnswer.findIndex(c => c.id === activeContainerId)
+        const overContainerIndex = orderAnswer.findIndex(c => c.id === overContainerId)
+
+        const activeObj = orderAnswer[activeContainerIndex].items.find(item => item.id === activeId)
+
+        console.log("active cont: " + activeContainerId)
+        console.log("over cont: " + overContainerId)
+        
+        if (!activeContainerId || !overContainerId) return;
+
+        if (activeContainerId === overContainerId) return;
+
+        console.log(orderAnswer[orderAnswerContainer.ANSWER].items)
+
+
+        setOrderAnswer(prev => {
+            return prev.map(container => {
+                if (container.id === 'stapler') {
+                    const existingItem = container.items.find(item => item.type === activeContainerId)
+                    const itemList = existingItem ? 
+                        [...container.items.filter(item => item.id !== existingItem.id),
+                            {...activeObj, type: activeContainerId}
+                        ]
+                        : [...container.items, {...activeObj, type: activeContainerId}]
+                    return  {
+                        ...container,
+                        items: itemList
+                    }
+                } 
+
+                if (container.id === activeContainerId) {
+                    const existingItem = prev[orderAnswerContainer.STAPLER].items.find(item => item.type === activeContainerId)
+                    // console.log("prev items")
+                    // console.log(prev[orderAnswerContainer.STAPLER].items)
+                    // console.log("found item")
+                    // console.log(existingItem)
+                    const itemList = existingItem ? 
+                        [...container.items.filter(item => item.id !== activeId),
+                        existingItem
+                        ]
+                        : [...container.items.filter(item => item.id !== activeId)]
+                    return {
+                        ...container,
+                        items: itemList
+                    }
+                    
+                }
+                return container;
+            })
+        })
+
     }
 
     function handleNotesDragEnd() {
@@ -320,9 +455,12 @@ export default function Desk() {
 
     return (
         <>
+
             <DndContext
+                collisionDetection={pointerWithin}
                 sensors={sensors}
-                modifiers={[restrictToWindowEdges]} 
+                modifiers={[restrictToWindowEdges]}  
+                autoScroll={false}
                 onDragStart={handleNotesDragStart}
                 onDragOver={handleNotesDragHover}
                 onDragEnd={handleNotesDragEnd}
@@ -334,25 +472,38 @@ export default function Desk() {
                 </div>
                 <div className={`output ${showOutput ? 'output-display' : ''}`} ref={outputSidebar}>
                     <div className='bin'>
-                        <Droppable id='bin' className='container'>
+                        <Droppable id='bin' className='sidebar-container'>
 
                         </Droppable>
                         
                     </div>
                     <div className='paper-container'>
-                        <Droppable id='paper-container' className='container'>
+                        <Droppable id='paper-container' className='sidebar-container'>
                             
                         </Droppable>
                         
                     </div>
+                    
+                </div>
+                <div className='stapler'>
+                    <img src='stapler.png' alt='stapler button'></img>
+
+                    <Droppable id='stapler' className='stapler-ui'>
+                        {staplerItemsElements}
+                    </Droppable>
                 </div>
             
             </DndContext>
+
             <section id='desk'>
+                {/* Gives space for the image which is used above */}
+                <div className='stapler'>
+                </div>
             
             <DndContext
                 collisionDetection={closestCenter}
                 sensors={sensors}
+                autoScroll={false}
                 modifiers={[restrictToWindowEdges]} 
                 onDragStart={(event) => {
                     event.active.data.current.type === 'character' ? setParentDisabled(true) : null
@@ -380,6 +531,16 @@ export default function Desk() {
                     startPos={{x: 150, y: 150}} 
                     disabled={parentDisabled}
                 />
+                
+                <button className="rules" onClick={openRuleBook}>
+                    <img src="rules.png" alt='rule book' ref={ruleBookImg}></img>
+                
+                </button>
+                <RuleBook
+                    startPos={{x: 150, y: 150}} 
+                    ref={ruleBookUIRef}
+                />
+
                 <DragOverlay
                     dropAnimation={{
                     duration: 150,
@@ -393,10 +554,6 @@ export default function Desk() {
                     ): null}
                 </DragOverlay>
             </DndContext>
-            <button className="rules">
-                <img src="rules.png" alt='rule book'></img>
-                
-            </button>
             
 
         </section>
