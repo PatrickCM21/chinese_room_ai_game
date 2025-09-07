@@ -9,14 +9,6 @@ import PaperDroppable from './PaperDroppable';
 import RuleBook from './RuleBook';
 import DeskOverlay from './DeskOverlay.jsx';
 
-const orderAnswerContainer = {
-    ORDER: 0,
-    ANSWER: 1,
-    STAPLER: 2,
-    RESPONSES: 3,
-    BIN: 4
-}
-
 const characterContainer = {
     DICTIONARY: 0,
     PAPER: 1
@@ -68,8 +60,8 @@ export default function Desk() {
         items: [
             {
                 id: 14,
-                order: "你你你",
-                answer: "你你你",  
+                order: "你好马",
+                answer: "很好",  
                 type: 'responses'
             }
         ]
@@ -77,6 +69,10 @@ export default function Desk() {
         {
         id: "bin",
         items: []
+        },
+        {
+        id: "paper-container",
+        items: [{}]
         }
     ])
 
@@ -130,7 +126,7 @@ export default function Desk() {
                 answer: "我会说中文"
             },
             {
-                id: 9,
+                id: 10,
                 order: "文说中文",
                 answer: "我会说中文"
             }
@@ -365,7 +361,7 @@ export default function Desk() {
 
     return (
         <>
-            <DeskOverlay orderAnswerArr = {[orderAnswer, setOrderAnswer]} />
+            <DeskOverlay orderAnswerArr = {[orderAnswer, setOrderAnswer]} rulesList = {[rules, setRules]}/>
 
             <section id='desk'>
                 {/* Gives space for the image which is used above */}

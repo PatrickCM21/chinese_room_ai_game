@@ -1,30 +1,30 @@
 import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay, pointerWithin, MeasuringStrategy } from '@dnd-kit/core'
-import { arrayMove } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
 import { v4 as newId } from 'uuid';
 
 import { useWindowWidth } from '@react-hook/window-size'
 
-
+import { LevelContext } from './Context.jsx';
 import Order from './Order.jsx';
 import Answer from './Answer';
 import Droppable from './Droppable';
 
 import Response from './Response.jsx'
 
-export default function DeskOverlay({orderAnswerArr}) {
+export default function DeskOverlay({orderAnswerArr, rulesList}) {
     const orderAnswerContainer = {
     ORDER: 0,
     ANSWER: 1,
     STAPLER: 2,
     RESPONSES: 3,
-    BIN: 4
+    BIN: 4,
+    PAPERCONTAINER: 5
 }   
     const windowWidth = useWindowWidth();
     const [ orderAnswer, setOrderAnswer ] = orderAnswerArr;
-
-
+    const [ rules, setRules ] = rulesList
+    const [level, setLevel] = React.useContext(LevelContext)
     
     const [key, setKey] = React.useState(0);
     const paperContainerImg = React.useRef(null)
@@ -133,27 +133,6 @@ export default function DeskOverlay({orderAnswerArr}) {
             </div>
         )
     }
-    
-    function createAnswer() {
-        if (characters[characterContainer.PAPER].items.length === 0) return;
-        setOrderAnswer(prev => {
-            return prev.map(container => {
-                if (container.id !== 'answers') return container
-                return {
-                    ...container,
-                    items: [
-                        ...container.items,
-                        {
-                            id: newId(),
-                            text: collectCharacters(characters[characterContainer.PAPER].items)
-                        }
-                    ]
-                }
-            })
-
-        })
-        resetPaper()
-    }
 
     function createResponse() {
         setOrderAnswer(prev => {
@@ -189,21 +168,25 @@ export default function DeskOverlay({orderAnswerArr}) {
     }
 
     function handleNotesDragOver(event) {
+
+
         const { active, over } = event;
 
         const activeId = active.id;
         const activeContainerId = findPaperContainerId(activeId)
         const activeContainerIndex = orderAnswer.findIndex(c => c.id === activeContainerId)
-        console.log(activeId)
-        console.log(over)
+        // console.log(active)
+        // console.log(over)
         const activeObj = orderAnswer[activeContainerIndex].items.find(item => item.id === activeId)
+
+        if (over?.id === 'responses' && activeObj.type != 'responses') return;
 
         if (!over) {
             if (hoverDropped) {
-                console.log("triggered hover drop")
-                console.log(activeObj)
-                            console.log("hover dropped is")
-                            console.log(hoverDroppedItem)
+                // console.log("triggered hover drop")
+                // console.log(activeObj)
+                // console.log("hover dropped is")
+                // console.log(hoverDroppedItem)
                 setOrderAnswer(prev => {
                     return prev.map(container => {
                         if (activeContainerId === 'stapler' && container.id === 'stapler') {
@@ -225,8 +208,6 @@ export default function DeskOverlay({orderAnswerArr}) {
                         } 
 
                         if (activeContainerId === 'bin' && container.id === 'bin') {
-                            console.log("removed paper from bin")
-
                             binImg.current.style.backgroundImage = 'url(binEmpty.png)'
                             return {
                                 ...container,
@@ -235,7 +216,8 @@ export default function DeskOverlay({orderAnswerArr}) {
                             }
                         }
 
-                        if (activeContainerId === 'responses' && container.id === 'responses') {
+
+                        if (activeContainerId === 'paper-container' && container.id === 'paper-container') {
                             console.log("removed paper from container")
                             paperContainerImg.current.style.backgroundImage = 'url(paperContainerEmpty.png)'
                             return {
@@ -273,19 +255,23 @@ export default function DeskOverlay({orderAnswerArr}) {
 
         const overId = over.id;
 
-        console.log("active : " + activeId)
-        console.log("over : " + overId)
+        // console.log("active : " + activeId)
+        // console.log("over : " + overId)
 
         const overContainerId = findPaperContainerId(overId)
 
-        console.log("active cont: " + activeContainerId)
-        console.log("over cont: " + overContainerId)
+        // console.log("active cont: " + activeContainerId)
+        // console.log("over cont: " + overContainerId)
         
         if (!activeContainerId || !overContainerId) return;
 
         if (activeContainerId === overContainerId) return;
 
+        let tempHoverDropped = false;
+        let tempHoverDroppedItem = null;
+
         setOrderAnswer(prev => {
+            console.log("updated location")
             return prev.map(container => {
                 if (overContainerId === 'stapler' && container.id === 'stapler') {
                     const existingItem = container.items.find(item => item.type === activeContainerId)
@@ -294,8 +280,8 @@ export default function DeskOverlay({orderAnswerArr}) {
                             {...activeObj, type: activeContainerId}
                         ]
                         : [...container.items, {...activeObj, type: activeContainerId}]
-                    setHoverDropped(true)
-                    setHoverDroppedItem(existingItem)
+                    tempHoverDropped=true
+                    tempHoverDroppedItem = existingItem
                     
                     return  {
                         ...container,
@@ -305,8 +291,8 @@ export default function DeskOverlay({orderAnswerArr}) {
 
                 if (overContainerId === 'bin' && container.id === 'bin') {
                     binImg.current.style.backgroundImage = 'url(bin.png)'
-                    setHoverDropped(true)
-                    setHoverDroppedItem(null)
+                    tempHoverDropped= true
+                    tempHoverDroppedItem = null
                     return {
                         ...container,
                         items: [
@@ -315,10 +301,11 @@ export default function DeskOverlay({orderAnswerArr}) {
                     }
                 }
 
-                if (overContainerId === 'responses' && container.id === 'responses') {
+                if (overContainerId === 'paper-container' && container.id === 'paper-container') {
+                    console.log("updated paper container")
                     paperContainerImg.current.style.backgroundImage = 'url(paperContainer.png)'
-                    setHoverDropped(true)
-                    setHoverDroppedItem(null)
+                    tempHoverDropped=true
+                    tempHoverDroppedItem = null
                     return {
                         ...container,
                         items: [
@@ -349,6 +336,8 @@ export default function DeskOverlay({orderAnswerArr}) {
                 return container;
             })
         })
+        setHoverDropped(tempHoverDropped)
+        setHoverDroppedItem(tempHoverDroppedItem)
 
     }
 
@@ -372,15 +361,35 @@ export default function DeskOverlay({orderAnswerArr}) {
             })
         }
 
-        if (orderAnswer[orderAnswerContainer.RESPONSES].items > 0) {
+        console.log(level)
+
+        if (orderAnswer[orderAnswerContainer.PAPERCONTAINER].items.length > 0) {
             processResponse()
+            paperContainerImg.current.style.backgroundImage = 'url(paperContainerEmpty.png)'
+
         }
 
     }
 
     function processResponse() {
+        const receivedResponse = orderAnswer[orderAnswerContainer.PAPERCONTAINER].items[0];
+        const question = rules.active.find((rule) => rule.order === receivedResponse.order)
 
+        if (question.answer === receivedResponse.answer) {
+            updateLevel(10)
+            orderAnswer[orderAnswerContainer.PAPERCONTAINER].items = []
+        }
     }
+
+    function updateLevel(added_xp) {
+        setLevel(prev => {
+            return {
+                ...prev,
+                xp: (prev.xp + added_xp)
+            }
+        })
+    }
+
     function openStapler() {
         setStaplerOpen(prev => !prev)
     }
@@ -403,7 +412,7 @@ export default function DeskOverlay({orderAnswerArr}) {
                 {responsesList}
             </div>
             <div 
-                className={`output ${showOutput ? 'output-display' : ''}`} 
+                className={`output ${showOutput ? 'output-display' : 'output-display'}`} 
                 ref={outputSidebar}
                 onTransitionEnd={() => setKey(k => k + 1)}
             >
@@ -414,7 +423,7 @@ export default function DeskOverlay({orderAnswerArr}) {
                     
                 </div>
                 <div className='paper-container' ref={paperContainerImg}>
-                    <Droppable key={`paper-${key}`} id='responses' className='sidebar-container'>
+                    <Droppable key={`paper-${key}`} id='paper-container' className='sidebar-container'>
                         
                     </Droppable>
                     
@@ -423,7 +432,6 @@ export default function DeskOverlay({orderAnswerArr}) {
             </div>
             <button className='stapler' onClick={openStapler}>
                 <img src='stapler.png' alt='stapler button'></img>
-
 
                 <Droppable 
                     id='stapler' 
@@ -439,8 +447,8 @@ export default function DeskOverlay({orderAnswerArr}) {
                 {activeId ? (
                 <PaperOverlay 
                     className={
-                        getActiveItem().id === 'responses' ? 'response'
-                        : getActiveItem().id === 'orders' ? 'paper order'
+                        getActiveItem().type === 'responses' ? 'response'
+                        : getActiveItem().type === 'orders' ? 'paper order'
                         : 'paper answer'
                         }>
                     {getActiveItem()}

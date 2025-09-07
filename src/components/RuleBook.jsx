@@ -20,14 +20,13 @@ export default function RuleBook({ref, startPos, rules}) {
     })
 
     const pageCount = Math.ceil(rules.active.length / rulesPerPage);
-    console.log(rules.active.length)
-
     let pageButtons = [];
     for (let i = 1; i < pageCount + 1; i++)  {
         pageButtons.push(
             <button 
                 onClick={() => setCurrPage(i)} 
                 className={currPage === i ? "active-btn" : ""}
+                key={`btn-${i}`}
             >{i}</button>
         )
     }

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, createContext } from 'react'
+import { LevelContext } from './components/Context'
 
 import ChineseRoom from './components/ChineseRoom'
 import Desk from './components/Desk'
@@ -10,12 +11,19 @@ import './components/Desk.css'
 
 function App() {
 
+  const [level, setLevel] = useState({
+    level: 0,
+    xp: 0,
+    prestige: 0
+  })
 
   return (
     <>
-      <Popups />
-      <ChineseRoom />
-      <Desk />
+      <LevelContext value={[level, setLevel]}>
+        <Popups />
+        <ChineseRoom />
+        <Desk />
+      </LevelContext>
 
     </>
   )
