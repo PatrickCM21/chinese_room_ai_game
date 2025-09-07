@@ -1,15 +1,15 @@
-import DraggableAnywhere from "./DraggableAnywhere"
+import DraggableAnywhere from "../base_dnd/DraggableAnywhere"
 
-export default function Answer({id, children}) {
+export default function Response({id, children}) {
     return (
         <DraggableAnywhere 
             id={id}
-            type='answer'
+            type='response'
             startPos={{x: 120, y: 120}}
             className='paper-ui'
         >
-            <article className='paper answer'>
-                {children}
+            <article className='response'>
+
             </article>
 
 

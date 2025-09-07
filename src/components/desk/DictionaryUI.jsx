@@ -1,8 +1,7 @@
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
-import Draggable from './Draggable'
-import SortableDraggable from './SortableDraggable'
-import DraggableAnywhere from './DraggableAnywhere'
-import Droppable from './Droppable'
+import SortableDraggable from '../base_dnd/SortableDraggable'
+import DraggableAnywhere from "../base_dnd/DraggableAnywhere"
+import Droppable from '../base_dnd/Droppable'
 
 
 export default function DictionaryUI({ dictionary, ref, startPos, disabled }) {

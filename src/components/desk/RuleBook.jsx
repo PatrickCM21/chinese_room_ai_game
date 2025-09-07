@@ -1,4 +1,4 @@
-import DraggableAnywhere from "./DraggableAnywhere"
+import DraggableAnywhere from "../base_dnd/DraggableAnywhere"
 import { useState } from 'react'
 export default function RuleBook({ref, startPos, rules}) {
 

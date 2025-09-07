@@ -1,4 +1,4 @@
-import DraggableAnywhere from "./DraggableAnywhere"
+import DraggableAnywhere from "../base_dnd/DraggableAnywhere"
 
 export default function Order({ children, id }) {
     return (

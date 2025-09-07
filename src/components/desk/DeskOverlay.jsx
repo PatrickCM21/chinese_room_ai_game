@@ -1,14 +1,14 @@
-import { closestCenter, DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay, pointerWithin, MeasuringStrategy } from '@dnd-kit/core'
+import { DndContext, useSensor, useSensors, PointerSensor, KeyboardSensor, DragOverlay, pointerWithin, MeasuringStrategy } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
 import { v4 as newId } from 'uuid';
 
 import { useWindowWidth } from '@react-hook/window-size'
 
-import { LevelContext } from './Context.jsx';
+import { LevelContext } from '../Context.jsx';
 import Order from './Order.jsx';
-import Answer from './Answer';
-import Droppable from './Droppable';
+import Answer from './Answer.jsx';
+import Droppable from '../base_dnd/Droppable.jsx';
 
 import Response from './Response.jsx'
 
@@ -152,7 +152,8 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
                             {
                                 id: newId(),
                                 order: orderItem.text,
-                                answer: answerItem.text 
+                                answer: answerItem.text,
+                                type: 'responses' 
                             }
                         ]
                     }
@@ -445,11 +446,10 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
             </button>
             <DragOverlay
                 > 
-                {activeId ? (
+                {activeId && getActiveItem().type !== 'responses' ? (
                 <PaperOverlay 
                     className={
-                        getActiveItem().type === 'responses' ? 'response'
-                        : getActiveItem().type === 'orders' ? 'paper order'
+                        getActiveItem().type === 'orders' ? 'paper order'
                         : 'paper answer'
                         }>
                     {getActiveItem()}

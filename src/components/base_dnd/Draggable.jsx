@@ -1,29 +1,29 @@
-import React from 'react';
 import {useDraggable} from '@dnd-kit/core';
 import {CSS} from '@dnd-kit/utilities';
-import { useSortable } from '@dnd-kit/sortable';
 
-export default function SortableDraggable({id, disabled=false, children}){
-    const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({
+export default function Draggable({id, disabled=false, children, className, pos={x: 0,y: 0}, type, isDragging}) {
+    const {attributes, listeners, setNodeRef, transform} = useDraggable({
         id,
         data: {
-            type: "character"
-        }
+            type
+        },
+        disabled
     });
     const style = {
         // Outputs `translate3d(x, y, 0)`
         transform: CSS.Translate.toString(transform),
-        transition
+        left: pos.x,
+        top: pos.y
     };
 
     return (
         <div 
-            ref={setNodeRef}
+            ref={setNodeRef} 
             style={style} 
             {...listeners} 
             {...attributes} 
-            className={isDragging ? "dragging draggable" : 'draggable'}
-
+            id={id} 
+            className={`${className} ${isDragging ? 'dragging' : ''}`}
         >
             {children}
         </div>

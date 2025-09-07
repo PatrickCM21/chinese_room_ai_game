@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react'
-import { LevelContext } from './Context'
+import { LevelContext } from '../Context'
 
 export default function ChineseRoom() {
 

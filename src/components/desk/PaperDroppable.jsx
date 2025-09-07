@@ -1,6 +1,6 @@
-import SortableDraggable from "./SortableDraggable"
+import SortableDraggable from "../base_dnd/SortableDraggable"
 import { SortableContext } from "@dnd-kit/sortable"
-import Droppable from "./Droppable"
+import Droppable from "../base_dnd/Droppable"
 
 export default function PaperDroppable({container}) {
     const items = container.items;

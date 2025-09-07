@@ -4,9 +4,9 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
 import { v4 as newId } from 'uuid';
 
-import DictionaryUI from './DictionaryUI'
-import PaperDroppable from './PaperDroppable';
-import RuleBook from './RuleBook';
+import DictionaryUI from './DictionaryUI.jsx'
+import PaperDroppable from './PaperDroppable.jsx';
+import RuleBook from './RuleBook.jsx';
 import DeskOverlay from './DeskOverlay.jsx';
 
 const characterContainer = {
@@ -134,6 +134,13 @@ export default function Desk() {
             }
         ]
     })
+
+    // initialise data
+    React.useEffect(() => {
+
+    }, [])
+
+
 
     
     const [activeId, setActiveId] = React.useState(null)
@@ -455,7 +462,8 @@ export default function Desk() {
                     easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
                     }}
                     > 
-                    {activeId ? (
+                    {activeId && (getActiveItem()?.id === 'dictionary' || getActiveItem()?.id === 'paper') 
+                    ? (
                     <CharacterOverlay className='draggable'>
                         {getActiveItem()?.character}
                     </CharacterOverlay>
