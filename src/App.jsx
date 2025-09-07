@@ -14,7 +14,8 @@ function App() {
   const [level, setLevel] = useState({
     level: 0,
     xp: 0,
-    prestige: 0
+    prestige: 0,
+    xpRequired: 100
   })
 
   return (

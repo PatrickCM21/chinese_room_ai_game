@@ -14,6 +14,15 @@ const characterContainer = {
     PAPER: 1
 }
 
+const orderAnswerContainer = {
+    ORDER: 0,
+    ANSWER: 1,
+    STAPLER: 2,
+    RESPONSES: 3,
+    BIN: 4,
+    PAPERCONTAINER: 5
+}   
+
 
 export default function Desk() {
     const [characters, setCharacters] = React.useState([{
@@ -46,24 +55,17 @@ export default function Desk() {
         {
         id: "answers",
         items: [
-            {id: 12 , text: "好",  type: 'answers'},
+            {id: 12 , text: "很好",  type: 'answers'},
         ]
         },
         {
         id: "stapler",
         items: [
-            {id: 13 , text: "你你你", type: 'orders'}
         ]
         },
         {
         id: "responses",
         items: [
-            {
-                id: 14,
-                order: "你好马",
-                answer: "很好",  
-                type: 'responses'
-            }
         ]
         },
         {
@@ -72,7 +74,7 @@ export default function Desk() {
         },
         {
         id: "paper-container",
-        items: [{}]
+        items: []
         }
     ])
 
@@ -140,7 +142,44 @@ export default function Desk() {
     const dictionaryImg = React.useRef(null)
     const ruleBookUIRef = React.useRef(null)
     const ruleBookImg = React.useRef(null)
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
     
+    const generateNewOrder = () => {
+        if (orderAnswer[orderAnswerContainer.ORDER].items.length <= 5) {
+            console.log(orderAnswer[orderAnswerContainer.ORDER].items.length)
+            const randRule = getRandomInt(rules.active.length)
+            const newOrder = {
+                id: newId(),
+                text: rules.active[randRule].order,
+                type: 'orders'
+            }
+            setOrderAnswer(prev => {
+                return prev.map((c) => {
+                    if (c.id === 'orders') {
+                        return {
+                            ...c,
+                            items: [
+                                ...c.items,
+                                newOrder
+                            ]
+                        }
+                    } else {
+                        return c
+                    }
+                })
+
+            })
+        }
+    }
+    const orderDelay = 10 * 1000; // 10 seconds
+
+    React.useEffect(() => {
+        const interval = setInterval(generateNewOrder, orderDelay)
+        return (() => clearInterval(interval))
+    }, [orderAnswer[orderAnswerContainer.ORDER].items.length])
 
 
     const sensors = useSensors(

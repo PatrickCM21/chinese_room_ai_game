@@ -20,7 +20,8 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     RESPONSES: 3,
     BIN: 4,
     PAPERCONTAINER: 5
-}   
+    }   
+    
     const windowWidth = useWindowWidth();
     const [ orderAnswer, setOrderAnswer ] = orderAnswerArr;
     const [ rules, setRules ] = rulesList
@@ -412,7 +413,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
                 {responsesList}
             </div>
             <div 
-                className={`output ${showOutput ? 'output-display' : 'output-display'}`} 
+                className={`output ${showOutput ? 'output-display' : ''}`} 
                 ref={outputSidebar}
                 onTransitionEnd={() => setKey(k => k + 1)}
             >
