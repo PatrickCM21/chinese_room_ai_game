@@ -5,7 +5,6 @@ export default function ChineseRoom() {
 
     const [levelData, setLevel] = useContext(LevelContext)
     const { level, prestige, xp, xpRequired } = levelData
-    console.log(levelData)
     
     const levelProgress = (xp / xpRequired) * 100;
 

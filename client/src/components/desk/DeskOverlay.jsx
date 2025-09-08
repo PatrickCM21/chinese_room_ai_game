@@ -349,7 +349,6 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
         setHoverDropped(false)
         setHoverDroppedItem(null)
         binImg.current.style.backgroundImage = 'url(binEmpty.png)'
-        
 
         if (orderAnswer[orderAnswerContainer.BIN].items > 0) {
             setOrderAnswer(prev => {
@@ -362,8 +361,6 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
                 })
             })
         }
-
-        console.log(level)
 
         if (orderAnswer[orderAnswerContainer.PAPERCONTAINER].items.length > 0) {
             processResponse()

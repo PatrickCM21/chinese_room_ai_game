@@ -1,0 +1,1 @@
+Project made for teaching high school students about how AI understands the world. Particularly, by placing the user in John Searle's 'Chinese Room Argument'. This helps them understand the distinction between syntax and semantics, and how computers can only understand the former, and by design, never the latter. Or so the argument goes.

@@ -3,11 +3,13 @@ import { arrayMove } from '@dnd-kit/sortable'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
 import { v4 as newId } from 'uuid';
+import axios from "axios"
 
 import DictionaryUI from './DictionaryUI.jsx'
 import PaperDroppable from './PaperDroppable.jsx';
 import RuleBook from './RuleBook.jsx';
 import DeskOverlay from './DeskOverlay.jsx';
+import { act } from 'react';
 
 const characterContainer = {
     DICTIONARY: 0,
@@ -24,49 +26,73 @@ const orderAnswerContainer = {
 }   
 
 
+let fetchedOnce = import.meta.hot?.data?.fetchedOnce ?? false;
+if (import.meta.hot) {
+    import.meta.hot.dispose((data) => {
+        data.fetchedOnce = fetchedOnce; // save on module replacement
+    });
+}
+
 export default function Desk() {
+    // const fetchAPI = async () => {
+    //     const response = await axios.get("http://localhost:8080/initialise")
+    //     console.log(response)
+    //     setCharacters([{
+    //         id: "dictionary",
+    //         items: response.data.dictionary
+    //         },
+    //         {
+    //         id: "paper",
+    //         items: [ ]
+    //     }])
+    //     setRules({
+    //         inactive: [],
+    //         active: response.data.rules
+    //     })
+    // }
+
+    // React.useEffect(() => {
+    //     if (!fetchedOnce) {
+    //         fetchedOnce = true;
+    //         if (import.meta.hot) import.meta.hot.data.fetchedOnce = true;
+    //         fetchAPI()
+    //         console.log("called api")
+    //     }
+    // }, [])
+    
+
     const [characters, setCharacters] = React.useState([{
         id: "dictionary",
         items: [
-            {id: 1 , character: "你"},
-            {id: 2 , character: "好"},
-            {id: 3 , character: "中"},
-            {id: 4 , character: "文"},
-            {id: 7 , character: "马"},
-            {id: 8 , character: "会"},
-            {id: 9 , character: "说"},
+            {"id":"3","character":"他"},
+            {"id":"4","character":"她"},
+            {"id":"5","character":"是"},
+            {"id":"6","character":"吗"},
+            {"id":"7","character":"好"},
+            {"id":"8","character":"早"},
         ]
         },
         {
         id: "paper",
-        items: [
-            {id: 5 , character: "中"},
-            {id: 6 , character: "很"}
-        ]
+        items: []
     }])
 
     const [orderAnswer, setOrderAnswer] = React.useState([
         {
         id: "orders",
-        items: [
-            {id: 11 , text: "你好马",  type: 'orders'},
-        ]
+        items: []
         },
         {
         id: "answers",
-        items: [
-            {id: 12 , text: "很好",  type: 'answers'},
-        ]
+        items: []
         },
         {
         id: "stapler",
-        items: [
-        ]
+        items: []
         },
         {
         id: "responses",
-        items: [
-        ]
+        items: []
         },
         {
         id: "bin",
@@ -87,41 +113,6 @@ export default function Desk() {
             }
         ],
         active: [
-            {
-                id: 2,
-                order: "你好马",
-                answer: "很好"
-            },
-            {
-                id: 3,
-                order: "你说中文吗",
-                answer: "我会说中文"
-            },
-            {
-                id: 5,
-                order: "你好马",
-                answer: "很好"
-            },
-            {
-                id: 4,
-                order: "你说吗",
-                answer: "我会说文"
-            },
-            {
-                id: 6,
-                order: "马",
-                answer: "很好"
-            },
-            {
-                id: 7,
-                order: "你说中文吗",
-                answer: "我会说"
-            },
-            {
-                id: 8,
-                order: "你",
-                answer: "很"
-            },
             {
                 id: 9,
                 order: "文吗",
@@ -229,6 +220,7 @@ export default function Desk() {
 
     const getActiveItem = () => {
         let item;
+        
         for (const container of characters) {
             item = container.items.find(item => 
             item.id === activeId
@@ -250,10 +242,18 @@ export default function Desk() {
         const activeId = active.id;
         const overId = over.id;
 
+        if (active.id === 'dictionary-handle' || active.id === 'rulebook-handle') return;
+
+
         const activeContainerId = findCharacterContainerId(activeId)
         const overContainerId = findCharacterContainerId(overId)
+        const activeContainerIndex = characters.findIndex(c => c.id === activeContainerId)
 
-        
+        const activeObj = characters[activeContainerIndex].items.find(item => item.id === activeId)
+
+        console.log(activeContainerId)
+        console.log(overContainerId)
+
         if (!activeContainerId || !overContainerId) return;
 
         if (activeContainerId === overContainerId) return;
@@ -269,22 +269,52 @@ export default function Desk() {
 
             const newContainers = prev.map(container => {
                 if (container.id === activeContainerId) {
-                    return {
+                    if (container.id === 'dictionary') {
+
+                        console.log("triggered duplicating in dic")
+                        const currItemIndex = container.items.findIndex(item => item.id === activeId)
+                        if (currItemIndex === -1) return container
+                        
+
+                        const newDic = {
                         ...container,
-                        items: container.items.filter(item => item.id !== activeId)
+                        items: [
+                            ...container.items.slice(0, currItemIndex),
+                            {...activeObj, id: newId()},
+                            ...container.items.slice(currItemIndex + 1)
+                        ]
+                        } 
+                        return newDic
+                    } else {
+                        return {
+                            ...container,
+                            items: container.items.filter(item => item.id !== activeId),
+                        }
                     }
+                    
                 }
                 if (container.id === overContainerId) {
+                    if (overContainerId === 'dictionary') {
+                        const newDic = {
+                        ...container,
+                        items: [
+                            ...container.items.filter(char => char.character !== activeObj.character),
+                            activeObj,
+                        ]
+                        } 
+                        return newDic
+                    }
                     if (overId === overContainerId) {
                         return {
                         ...container,
                         items: [...container.items, activeItem]
-                        }
+                        }   
                     }
                 }
 
                 const overItemIndex = container.items.findIndex(item => item.id === overId)
                 if (overItemIndex !== -1) {
+                    console.log("removed but indexing this time")
                     return {
                         ...container,
                         items: [
@@ -293,6 +323,7 @@ export default function Desk() {
                         ...container.items.slice(overItemIndex + 1)
                         ]
                     }
+                    
                 }
 
                 return container
@@ -303,7 +334,6 @@ export default function Desk() {
 
     function handleCharacterDragEnd(event) {
         const {active, over} = event;
-
         if (!over) {
             setActiveId(null);
             return;
@@ -339,7 +369,35 @@ export default function Desk() {
                 })
             }
         }
+
+        if (newContainer === 'dictionary') {
+            setCharacters(prev => {
+                return prev.map(c => {
+                    if (c.id === 'dictionary') {
+                        return normaliseDictionary(c)
+                    } else {
+                        return c
+                    }
+                })
+            })
+        }
         setActiveId(null)
+    }
+
+    function normaliseDictionary(c) {
+        const seen = new Set();
+        const charsSet = c.items.filter(char => {
+            if (!seen.has(char.character)) {
+                seen.add(char.character)
+                return true
+            } else {
+                return false
+            }
+        })
+        return {
+            ...c,
+            items: charsSet
+        }
     }
 
     function CharacterOverlay({ children, className }) {
@@ -455,7 +513,7 @@ export default function Desk() {
                     easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
                     }}
                     > 
-                    {activeId && (getActiveItem()?.id === 'dictionary' || getActiveItem()?.id === 'paper') 
+                    {activeId && (getActiveItem() !== null) 
                     ? (
                     <CharacterOverlay className='draggable'>
                         {getActiveItem()?.character}

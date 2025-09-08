@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { LevelContext } from './components/Context'
-import axios from "axios"
 
 import ChineseRoom from './components/room/ChineseRoom'
 import Desk from './components/desk/Desk'
@@ -18,15 +17,6 @@ function App() {
     prestige: 0,
     xpRequired: 100
   })
-
-  const fetchAPI = async () => {
-    const response = await axios.get("http://localhost:8080/test")
-    console.log(response.data.test)
-  }
-
-  useEffect(() => {
-    fetchAPI()
-  }, [])
 
   return (
     <>
