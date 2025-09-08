@@ -9,7 +9,6 @@ import DictionaryUI from './DictionaryUI.jsx'
 import PaperDroppable from './PaperDroppable.jsx';
 import RuleBook from './RuleBook.jsx';
 import DeskOverlay from './DeskOverlay.jsx';
-import { act } from 'react';
 
 const characterContainer = {
     DICTIONARY: 0,
@@ -25,6 +24,8 @@ const orderAnswerContainer = {
     PAPERCONTAINER: 5
 }   
 
+// Used to toggle api
+const useAPI = false;
 
 let fetchedOnce = import.meta.hot?.data?.fetchedOnce ?? false;
 if (import.meta.hot) {
@@ -34,31 +35,31 @@ if (import.meta.hot) {
 }
 
 export default function Desk() {
-    // const fetchAPI = async () => {
-    //     const response = await axios.get("http://localhost:8080/initialise")
-    //     console.log(response)
-    //     setCharacters([{
-    //         id: "dictionary",
-    //         items: response.data.dictionary
-    //         },
-    //         {
-    //         id: "paper",
-    //         items: [ ]
-    //     }])
-    //     setRules({
-    //         inactive: [],
-    //         active: response.data.rules
-    //     })
-    // }
+    const fetchAPI = async () => {
+        const response = await axios.get("http://localhost:8080/initialise")
+        console.log(response)
+        setCharacters([{
+            id: "dictionary",
+            items: response.data.dictionary
+            },
+            {
+            id: "paper",
+            items: [ ]
+        }])
+        setRules({
+            inactive: [],
+            active: response.data.rules
+        })
+    }
 
-    // React.useEffect(() => {
-    //     if (!fetchedOnce) {
-    //         fetchedOnce = true;
-    //         if (import.meta.hot) import.meta.hot.data.fetchedOnce = true;
-    //         fetchAPI()
-    //         console.log("called api")
-    //     }
-    // }, [])
+    React.useEffect(() => {
+        if (!fetchedOnce && useAPI) {
+            fetchedOnce = true;
+            if (import.meta.hot) import.meta.hot.data.fetchedOnce = true;
+            fetchAPI()
+            console.log("called api")
+        }
+    }, [])
     
 
     const [characters, setCharacters] = React.useState([{

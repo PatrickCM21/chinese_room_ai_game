@@ -27,7 +27,7 @@ app.get("/initialise", async (req, res) => {
     Return only JSON.`
     try {
         const response = await openai.responses.create({
-            model: "gpt-4.1",
+            model: "gpt-5-mini",
             input: [
             { role: "system", content: system },
             { role: "user", content: user }

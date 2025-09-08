@@ -25,7 +25,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     const windowWidth = useWindowWidth();
     const [ orderAnswer, setOrderAnswer ] = orderAnswerArr;
     const [ rules, setRules ] = rulesList
-    const [level, setLevel] = React.useContext(LevelContext)
+    const [level, setLevel] = React.useContext(LevelContext).level
     
     const [key, setKey] = React.useState(0);
     const paperContainerImg = React.useRef(null)

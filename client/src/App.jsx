@@ -18,9 +18,11 @@ function App() {
     xpRequired: 100
   })
 
+  const [dialogue, setDialogue] = useState(0)
+
   return (
     <>
-      <LevelContext value={[level, setLevel]}>
+      <LevelContext value={{level: [level, setLevel], dialogue: [dialogue, setDialogue]}}>
         <Popups />
         <ChineseRoom />
         <Desk />

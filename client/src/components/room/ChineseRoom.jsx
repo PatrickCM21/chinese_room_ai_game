@@ -3,7 +3,9 @@ import { LevelContext } from '../Context'
 
 export default function ChineseRoom() {
 
-    const [levelData, setLevel] = useContext(LevelContext)
+    const [levelData, setLevel] = useContext(LevelContext).level
+    const [dialogue, setDialogue] = useContext(LevelContext).dialogue
+
     const { level, prestige, xp, xpRequired } = levelData
     
     const levelProgress = (xp / xpRequired) * 100;
@@ -14,12 +16,12 @@ export default function ChineseRoom() {
     }
 
     useEffect(() => {
-        if (xp >= xpRequired) {
+        if (xp > getXpRequired(level)) {
             executeLevelUp()
         }
     }, [xp])
 
-    function getNewXpRequired(newLevel) {
+    function getXpRequired(Level) {
         return 100
     }
 
@@ -29,11 +31,10 @@ export default function ChineseRoom() {
                 ...prev,
                 level: prev.level + 1,
                 xp: prev.xp - prev.xpRequired,
-                xpRequired: getNewXpRequired(prev.level + 1)
+                xpRequired: getXpRequired(prev.level + 1)
             }
         })
-
-        // story stuff goes here
+        setDialogue(prev => prev + 1)
     }
 
     return (

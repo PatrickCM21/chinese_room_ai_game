@@ -1,0 +1,34 @@
+[
+    {
+        "popups": [
+            {
+                "text": "Welcome to the Chinese Room!",
+                "buttons": [
+                    {
+                        "text": "great to be here!",
+                        "goto": 1
+                    },
+                    {
+                        "text": "what's the chinese room?",
+                        "goto": 1
+                    }
+                ]
+            },
+            {
+                "text": "The Chinese Room is a philosophical argument by John Searle that aims to make the final statement on whether computers as we know them can ever 'understand' the things they do, like how we humans do.",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "That sounds really weird.",
+                        "goto": 1
+                    },
+                    {
+                        "id": 2,
+                        "text": "Why am i here?",
+                        "goto": null
+                    }
+                ]
+            }
+        ]
+    }
+]
