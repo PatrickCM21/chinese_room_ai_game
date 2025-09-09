@@ -20,9 +20,11 @@ function App() {
 
   const [dialogue, setDialogue] = useState(0)
 
+  const [currentlyPlaying, setCurrentlyPlaying] = useState(false)
+
   return (
     <>
-      <LevelContext value={{level: [level, setLevel], dialogue: [dialogue, setDialogue]}}>
+      <LevelContext value={{level: [level, setLevel], dialogue: [dialogue, setDialogue], currentlyPlaying: [currentlyPlaying, setCurrentlyPlaying]}}>
         <Popups />
         <ChineseRoom />
         <Desk />

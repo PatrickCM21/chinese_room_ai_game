@@ -7,8 +7,13 @@ export default function PopupItem({text, buttons, updateDialogue}) {
     return (
         <div className="popup">
             <section className="popup-data">
-                {text}
-                {buttonElements}
+                <div className="popup-text">
+                    {text}
+
+                </div>
+                <div className="popup-btns">
+                    {buttonElements}
+                </div>
             </section>
         </div>
     )

@@ -97,7 +97,17 @@
     cursor: grab;
 
     font-size: 20px;
+    transition: transform 0.5s ease; /* be specific */
 
+
+}
+
+.paper-off-screen {
+    transform: translateX(-100%);
+}
+
+.paper-on-screen {
+    transform: translateX(0);
 }
 
 .response {

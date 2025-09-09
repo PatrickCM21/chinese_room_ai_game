@@ -9,6 +9,7 @@ import DictionaryUI from './DictionaryUI.jsx'
 import PaperDroppable from './PaperDroppable.jsx';
 import RuleBook from './RuleBook.jsx';
 import DeskOverlay from './DeskOverlay.jsx';
+import { LevelContext } from '../Context.jsx';
 
 const characterContainer = {
     DICTIONARY: 0,
@@ -140,38 +141,40 @@ export default function Desk() {
     }
     
     const generateNewOrder = () => {
-        if (orderAnswer[orderAnswerContainer.ORDER].items.length <= 5) {
-            console.log(orderAnswer[orderAnswerContainer.ORDER].items.length)
-            const randRule = getRandomInt(rules.active.length)
-            const newOrder = {
-                id: newId(),
-                text: rules.active[randRule].order,
-                type: 'orders'
-            }
-            setOrderAnswer(prev => {
-                return prev.map((c) => {
-                    if (c.id === 'orders') {
-                        return {
-                            ...c,
-                            items: [
-                                ...c.items,
-                                newOrder
-                            ]
-                        }
-                    } else {
-                        return c
-                    }
-                })
-
-            })
+        const randRule = getRandomInt(rules.active.length)
+        const newOrder = {
+            id: newId(),
+            text: rules.active[randRule].order,
+            type: 'orders'
         }
+        setOrderAnswer(prev => {
+            if (prev[orderAnswerContainer.ORDER].items.length >= 5) return prev
+            return prev.map((c) => {
+                if (c.id === 'orders') {
+                    return {
+                        ...c,
+                        items: [
+                            ...c.items,
+                            newOrder
+                        ]
+                    }
+                } else {
+                    return c
+                }
+            })
+
+        })
+        // add customer stuff
     }
-    const orderDelay = 10 * 1000; // 10 seconds
+
+    const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
+    const orderDelay = 4 * 1000; // 10 seconds
 
     React.useEffect(() => {
+        if (!currentlyPlaying) return
         const interval = setInterval(generateNewOrder, orderDelay)
         return (() => clearInterval(interval))
-    }, [orderAnswer[orderAnswerContainer.ORDER].items.length])
+    }, [currentlyPlaying])
 
 
     const sensors = useSensors(
@@ -462,7 +465,7 @@ export default function Desk() {
             <DeskOverlay orderAnswerArr = {[orderAnswer, setOrderAnswer]} rulesList = {[rules, setRules]}/>
 
             <section id='desk'>
-                {/* Gives space for the image which is used above */}
+                {/* Gives space for the image which is used in overlay */}
                 <div className='stapler'>
                 </div>
             

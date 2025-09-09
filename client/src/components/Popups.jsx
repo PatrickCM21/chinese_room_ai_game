@@ -11,6 +11,7 @@ import React from 'react'
 export default function Popups() {
     const [popupIndex, setPopupIndex] = React.useState(0)
     const [dialogue, setDialogue] = React.useContext(LevelContext).dialogue
+    const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
     const dialogueClosed = React.useRef(false)
     const [key, setKey] = React.useState(0)
 
@@ -26,6 +27,7 @@ export default function Popups() {
             setPopupIndex(goto)
         } else {
             dialogueClosed.current = true;
+            setCurrentlyPlaying(true)
             setKey(prev => prev + 1)
         }
     }

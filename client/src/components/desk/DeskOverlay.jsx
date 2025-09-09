@@ -61,7 +61,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     }, [holdingOutput])
 
     const orderList = orderAnswer.find(container => container.id === 'orders').items.map(order => {
-        return <Order id={order.id} key={order.id}>
+        return <Order id={order.id} key={order.id} className='paper-off-screen'>
             {order.text}
         </Order>
     })
@@ -77,8 +77,6 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
 
     })
 
-    
-    const staplerItems = orderAnswer[orderAnswerContainer.STAPLER]
     const orderItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'orders')
     const answerItem = orderAnswer[orderAnswerContainer.STAPLER].items.find(item => item.type === 'answers')
     const staplerItemsElements = (
@@ -177,18 +175,12 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
         const activeId = active.id;
         const activeContainerId = findPaperContainerId(activeId)
         const activeContainerIndex = orderAnswer.findIndex(c => c.id === activeContainerId)
-        // console.log(active)
-        // console.log(over)
         const activeObj = orderAnswer[activeContainerIndex].items.find(item => item.id === activeId)
 
         if (over?.id === 'responses' && activeObj.type != 'responses') return;
 
         if (!over) {
             if (hoverDropped) {
-                // console.log("triggered hover drop")
-                // console.log(activeObj)
-                // console.log("hover dropped is")
-                // console.log(hoverDroppedItem)
                 setOrderAnswer(prev => {
                     return prev.map(container => {
                         if (activeContainerId === 'stapler' && container.id === 'stapler') {
@@ -257,14 +249,8 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
 
         const overId = over.id;
 
-        // console.log("active : " + activeId)
-        // console.log("over : " + overId)
-
         const overContainerId = findPaperContainerId(overId)
 
-        // console.log("active cont: " + activeContainerId)
-        // console.log("over cont: " + overContainerId)
-        
         if (!activeContainerId || !overContainerId) return;
 
         if (activeContainerId === overContainerId) return;
