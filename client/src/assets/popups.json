@@ -17,7 +17,7 @@
                 ]
             },
             {
-                "text": "This is a game is based on 'The Chinese Room Argument'. It is a philosophical argument by John Searle that aims to make the conclusively decide upon whether modern electrical computers can ever 'understand' the things they've been programmed to do in the same way we humans understand things we do.",
+                "text": "This is a game is based on 'The Chinese Room Argument'. It is a philosophical argument by John Searle that aims to conclusively decide upon whether modern electrical computers can ever 'understand' the things they've been programmed to do.",
                 "buttons": [
                     {
                         "id": 1,
@@ -32,7 +32,7 @@
                 ]
             },
             {
-                "text": "Your job here is the act as the person in the Chinese room. Your job is to receive a message written in Chinese from the outside, and use the dictionary and rulebook provided to create the right response, and send that back outside. Make sense?",
+                "text": "Your job here is the act as the worker in the Chinese Room. Your job is to receive a message written in Chinese from the outside, then use the dictionary and rulebook provided to create the right response, and send that back outside. Make sense?",
                 "buttons": [
                     {
                         "id": 1,
@@ -42,7 +42,7 @@
                 ]
             },
             {
-                "text": "Let me show you the ropes.",
+                "text": "Let me show you the ropes. Follow along with the directions I give you.",
                 "buttons": [
                     {
                         "id": 1,
@@ -53,84 +53,84 @@
                 "actions": -1
             },
             {
-                "text": "Firstly, you receive a message from the outside.",
+                "text": "Firstly, you receive a message from the outside. Look, one's just come in below!",
                 "buttons": [
                     {
                         "id": 1,
-                        "text": "Ok",
+                        "text": "Ok, cool.",
                         "goto": 5
                     }
                 ],
                 "actions": 0
             },
             {
-                "text": "Then, you can open your rulebook to find out how to respond.",
+                "text": "Then, you can open your rulebook to find out how to respond. Click the rules book below to see.",
                 "buttons": [
                     {
                         "id": 1,
-                        "text": "Ok",
+                        "text": "I've clicked it.",
                         "goto": 6
                     }
                 ],
                 "actions": 1
             },
             {
-                "text": "You'll find the characters to answer in your dictionary.",
+                "text": "To make your response, firstly, click the dictionary below to access your available characters.",
                 "buttons": [
                     {
                         "id": 1,
-                        "text": "Ok",
+                        "text": "I can't read this.",
                         "goto": 7
                     }
                 ],
                 "actions": 2
             },
             {
-                "text": "Which you can place onto the paper.",
+                "text": "That's okay, just follow the rulebook and drag them onto the paper in the right order.",
                 "buttons": [
                     {
                         "id": 1,
-                        "text": "Ok",
+                        "text": "I've dragged them on.",
                         "goto": 8
                     }
                 ],
                 "actions": 3
             },
             {
-                "text": "Then click the top right corner tab to create the response.",
+                "text": "Now that your answer is ready, click the top right corner of that paper to complete it.",
                 "buttons": [
                     {
                         "id": 1,
-                        "text": "Ok",
+                        "text": "I've made the new piece of paper.",
                         "goto": 9
                     }
                 ],
                 "actions": 4
             },
             {
-                "text": "Now you can click the stapler and staple the two pieces together!",
+                "text": "Great! The job and your answer are ready to combine. Click on the stapler to open it's menu. Then drag the job and your answer onto it and hit staple!",
                 "buttons": [
                     {
                         "id": 1,
-                        "text": "Ok",
+                        "text": "They're stapled.",
                         "goto": 10
                     }
                 ],
                 "actions": 5
             },
             {
-                "text": "And finally drag it over to the right where you can either bin it or send it off to it's recipient",
+                "text": "Now, the final step is to drag it over to the right side, a menu will appear where you can either bin it or finish the job.",
                 "buttons": [
                     {
                         "id": 1,
-                        "text": "Ok",
+                        "text": "Ok, that makes sense.",
                         "goto": 11
                     }
                 ],
                 "actions": 6
             },
             {
-                "text": "And that's all you'll need to know for your first day on the job! Keep a look out on the top left to keep track of how your work is going, we'll be explaining the meaning of all your menial labour soon. Good luck!",
+                "text": "And that's all you'll need to know for your first day on the job! Keep a look out on the top left to keep track of how your progressing, we'll be explaining the meaning of all your menial labour soon. Good luck!",
                 "buttons": [
                     {
                         "id": 1,

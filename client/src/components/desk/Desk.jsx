@@ -26,7 +26,7 @@ const orderAnswerContainer = {
 }   
 
 // Used to toggle api
-const useAPI = false;
+const useAPI = true;
 
 let fetchedOnce = import.meta.hot?.data?.fetchedOnce ?? false;
 if (import.meta.hot) {
@@ -37,6 +37,11 @@ if (import.meta.hot) {
 
 
 export default function Desk({orderAnswerArr}) {
+    const [fetchedData, setFetchedData] = React.useState({})
+    const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useState(false);
+    const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
+
+
     const [orderAnswer, setOrderAnswer] = orderAnswerArr
     const [characters, setCharacters] = React.useState([{
         id: "dictionary",
@@ -72,18 +77,7 @@ export default function Desk({orderAnswerArr}) {
     const fetchAPI = async () => {
         const response = await axios.get("http://localhost:8080/initialise")
         console.log(response)
-        setCharacters([{
-            id: "dictionary",
-            items: response.data.dictionary
-            },
-            {
-            id: "paper",
-            items: [ ]
-        }])
-        setRules({
-            inactive: [],
-            active: response.data.rules
-        })
+        setFetchedData(response)
     }
 
     React.useEffect(() => {
@@ -95,7 +89,43 @@ export default function Desk({orderAnswerArr}) {
         }
     }, [])
 
-    
+
+    React.useEffect(() => {
+        if (!currentlyPlaying) return;
+        if (!fetchedData) return;
+        if (appliedFetchedOnce) return;
+        setCharacters([
+        { id: "dictionary", items: fetchedData.data.dictionary ?? [] },
+        { id: "paper", items: [] },
+        ]);
+        setRules({
+        inactive: [],
+        active: fetchedData.data.rules ?? [],
+        });
+        setAppliedFetchedOnce(true);
+
+
+    }, [currentlyPlaying, fetchedData, appliedFetchedOnce]);
+
+    const generateNewOrder = React.useCallback(() => {
+        if (!rules.active?.length) return;
+        const randRule = Math.floor(Math.random() * rules.active.length);
+        const newOrder = {
+        id: newId(),
+        text: rules.active[randRule].order,
+        type: 'orders',
+        };
+        setOrderAnswer(prev =>
+        prev[orderAnswerContainer.ORDER].items.length >= 5
+            ? prev
+            : prev.map(c =>
+                c.id === 'orders'
+                ? { ...c, items: [...c.items, newOrder] }
+                : c
+            )
+        );
+    }, [rules.active, setOrderAnswer]);
+
     const [activeId, setActiveId] = React.useState(null)
     const [parentDisabled, setParentDisabled] = React.useState(false)
     const dictionaryUIRef = React.useRef(null)
@@ -103,45 +133,14 @@ export default function Desk({orderAnswerArr}) {
     const ruleBookUIRef = React.useRef(null)
     const ruleBookImg = React.useRef(null)
 
-    function getRandomInt(max) {
-        return Math.floor(Math.random() * max);
-    }
-    
-    const generateNewOrder = () => {
-        const randRule = getRandomInt(rules.active.length)
-        const newOrder = {
-            id: newId(),
-            text: rules.active[randRule].order,
-            type: 'orders'
-        }
-        setOrderAnswer(prev => {
-            if (prev[orderAnswerContainer.ORDER].items.length >= 5) return prev
-            return prev.map((c) => {
-                if (c.id === 'orders') {
-                    return {
-                        ...c,
-                        items: [
-                            ...c.items,
-                            newOrder
-                        ]
-                    }
-                } else {
-                    return c
-                }
-            })
 
-        })
-        // add customer stuff
-    }
-
-    const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
-    const orderDelay = 4 * 1000; // 10 seconds
+    const orderDelay = 10 * 1000; // 10 seconds
 
     React.useEffect(() => {
         if (!currentlyPlaying) return
         const interval = setInterval(generateNewOrder, orderDelay)
         return (() => clearInterval(interval))
-    }, [currentlyPlaying])
+    }, [currentlyPlaying, generateNewOrder])
 
 
     const sensors = useSensors(
