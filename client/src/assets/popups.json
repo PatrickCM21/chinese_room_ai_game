@@ -4,27 +4,142 @@
             {
                 "text": "Welcome to the Chinese Room!",
                 "buttons": [
-                    {
-                        "text": "great to be here!",
+                    {   
+                        "id": 1,
+                        "text": "Great to be here!",
                         "goto": 1
                     },
                     {
-                        "text": "what's the chinese room?",
+                        "id": 2,
+                        "text": "What's the chinese room?",
                         "goto": 1
                     }
                 ]
             },
             {
-                "text": "The Chinese Room is a philosophical argument by John Searle that aims to make the final statement on whether computers as we know them can ever 'understand' the things they do, like how we humans do.",
+                "text": "This is a game is based on 'The Chinese Room Argument'. It is a philosophical argument by John Searle that aims to make the conclusively decide upon whether modern electrical computers can ever 'understand' the things they've been programmed to do in the same way we humans understand things we do.",
                 "buttons": [
                     {
                         "id": 1,
                         "text": "That sounds really weird.",
-                        "goto": 1
+                        "goto": 2
                     },
                     {
                         "id": 2,
-                        "text": "Why am i here?",
+                        "text": "Why am I here?",
+                        "goto": 2
+                    }
+                ]
+            },
+            {
+                "text": "Your job here is the act as the person in the Chinese room. Your job is to receive a message written in Chinese from the outside, and use the dictionary and rulebook provided to create the right response, and send that back outside. Make sense?",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "How do I do that?",
+                        "goto": 3
+                    }
+                ]
+            },
+            {
+                "text": "Let me show you the ropes.",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "Go ahead.",
+                        "goto": 4
+                    }
+                ],
+                "actions": -1
+            },
+            {
+                "text": "Firstly, you receive a message from the outside.",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "Ok",
+                        "goto": 5
+                    }
+                ],
+                "actions": 0
+            },
+            {
+                "text": "Then, you can open your rulebook to find out how to respond.",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "Ok",
+                        "goto": 6
+                    }
+                ],
+                "actions": 1
+            },
+            {
+                "text": "You'll find the characters to answer in your dictionary.",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "Ok",
+                        "goto": 7
+                    }
+                ],
+                "actions": 2
+            },
+            {
+                "text": "Which you can place onto the paper.",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "Ok",
+                        "goto": 8
+                    }
+                ],
+                "actions": 3
+            },
+            {
+                "text": "Then click the top right corner tab to create the response.",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "Ok",
+                        "goto": 9
+                    }
+                ],
+                "actions": 4
+            },
+            {
+                "text": "Now you can click the stapler and staple the two pieces together!",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "Ok",
+                        "goto": 10
+                    }
+                ],
+                "actions": 5
+            },
+            {
+                "text": "And finally drag it over to the right where you can either bin it or send it off to it's recipient",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "Ok",
+                        "goto": 11
+                    }
+                ],
+                "actions": 6
+            },
+            {
+                "text": "And that's all you'll need to know for your first day on the job! Keep a look out on the top left to keep track of how your work is going, we'll be explaining the meaning of all your menial labour soon. Good luck!",
+                "buttons": [
+                    {
+                        "id": 1,
+                        "text": "I can't wait to level up!",
+                        "goto": null
+                    },
+                    {
+                        "id": 2,
+                        "text": "I better be getting paid for this",
                         "goto": null
                     }
                 ]

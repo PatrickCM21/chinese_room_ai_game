@@ -35,7 +35,40 @@ if (import.meta.hot) {
     });
 }
 
-export default function Desk() {
+
+export default function Desk({orderAnswerArr}) {
+    const [orderAnswer, setOrderAnswer] = orderAnswerArr
+    const [characters, setCharacters] = React.useState([{
+        id: "dictionary",
+        items: [
+            {"id":"1","character":"恨"},
+            {"id":"2","character":"我"},
+            {"id":"3","character":"好"},
+        ]
+        },
+        {
+        id: "paper",
+        items: []
+    }])
+
+
+    const [rules, setRules] = React.useState({
+        inactive: [
+            {
+                id: 1,
+                order: "你",
+                answer: "我"
+            }
+        ],
+        active: [
+            {
+                id: 1,
+                order: "你好吗",
+                answer: "我恨好"
+            },
+        ]
+    })
+
     const fetchAPI = async () => {
         const response = await axios.get("http://localhost:8080/initialise")
         console.log(response)
@@ -61,72 +94,6 @@ export default function Desk() {
             console.log("called api")
         }
     }, [])
-    
-
-    const [characters, setCharacters] = React.useState([{
-        id: "dictionary",
-        items: [
-            {"id":"3","character":"他"},
-            {"id":"4","character":"她"},
-            {"id":"5","character":"是"},
-            {"id":"6","character":"吗"},
-            {"id":"7","character":"好"},
-            {"id":"8","character":"早"},
-        ]
-        },
-        {
-        id: "paper",
-        items: []
-    }])
-
-    const [orderAnswer, setOrderAnswer] = React.useState([
-        {
-        id: "orders",
-        items: []
-        },
-        {
-        id: "answers",
-        items: []
-        },
-        {
-        id: "stapler",
-        items: []
-        },
-        {
-        id: "responses",
-        items: []
-        },
-        {
-        id: "bin",
-        items: []
-        },
-        {
-        id: "paper-container",
-        items: []
-        }
-    ])
-
-    const [rules, setRules] = React.useState({
-        inactive: [
-            {
-                id: 1,
-                order: "你",
-                answer: "我"
-            }
-        ],
-        active: [
-            {
-                id: 9,
-                order: "文吗",
-                answer: "我会说中文"
-            },
-            {
-                id: 10,
-                order: "文说中文",
-                answer: "我会说中文"
-            }
-        ]
-    })
 
     
     const [activeId, setActiveId] = React.useState(null)
@@ -363,7 +330,7 @@ export default function Desk() {
                 const newItems = arrayMove(container.items, activeIndex, overIndex)
 
                 setCharacters((container) => {
-                    return characters.map((c, i) => {
+                    return container.map((c, i) => {
                         if (i === containerIndex) {
                             return {...c, items: newItems}
                         } else {
@@ -421,14 +388,7 @@ export default function Desk() {
                         id: 'paper',
                         items: []
                     }
-                }
-                return {
-                    ...container,
-                    items: [
-                        ...container.items,
-                        ...characters[characterContainer.PAPER].items
-                    ]
-                }
+                } else return container
             })
         })
     }

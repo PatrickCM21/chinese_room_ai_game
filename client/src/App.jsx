@@ -9,6 +9,8 @@ import './App.css'
 import './components/room/ChineseRoom.css'
 import './components/desk/Desk.css'
 
+
+
 function App() {
 
   const [level, setLevel] = useState({
@@ -22,12 +24,39 @@ function App() {
 
   const [currentlyPlaying, setCurrentlyPlaying] = useState(false)
 
+  const [orderAnswer, setOrderAnswer] = useState([
+    {
+    id: "orders",
+    items: []
+    },
+    {
+    id: "answers",
+    items: []
+    },
+    {
+    id: "stapler",
+    items: []
+    },
+    {
+    id: "responses",
+    items: []
+    },
+    {
+    id: "bin",
+    items: []
+    },
+    {
+    id: "paper-container",
+    items: []
+    }
+  ])
+
   return (
     <>
       <LevelContext value={{level: [level, setLevel], dialogue: [dialogue, setDialogue], currentlyPlaying: [currentlyPlaying, setCurrentlyPlaying]}}>
-        <Popups />
+        <Popups orderAnswerArr={[orderAnswer, setOrderAnswer]}/>
         <ChineseRoom />
-        <Desk />
+        <Desk orderAnswerArr={[orderAnswer, setOrderAnswer]}/>
       </LevelContext>
 
     </>
