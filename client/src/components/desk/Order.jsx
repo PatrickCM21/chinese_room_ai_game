@@ -23,7 +23,7 @@ export default function Order({ children, id }) {
         >
             
             <article className={`paper order ${!show ? "paper-off-screen" : "paper-on-screen"}`}>
-                <span>Please Respond:</span>
+                <span>Please Respond To:</span>
                 {children}
             </article>
 

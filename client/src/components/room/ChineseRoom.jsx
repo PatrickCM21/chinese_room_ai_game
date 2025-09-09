@@ -10,6 +10,8 @@ export default function ChineseRoom() {
     
     const levelProgress = (xp / xpRequired) * 100;
 
+
+
     const levelProgressStyle = {
         width: `${levelProgress}%`,
         height: '100%',
@@ -22,7 +24,7 @@ export default function ChineseRoom() {
     }, [xp])
 
     function getXpRequired(Level) {
-        return 100
+        return 80
     }
 
     function executeLevelUp() {

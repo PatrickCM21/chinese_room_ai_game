@@ -88,11 +88,10 @@
 
 .paper {
     background-image: url("paper.png");
+    background-size: cover;
     width: 29vh;
     height: auto;
     padding: 20px;
-
-    object-fit:contain;
 
     cursor: grab;
 
@@ -112,11 +111,10 @@
 
 .response {
     background-image: url("response.png");
-    background-size: contain;
+    background-size: cover;
     width: 29vh;
     height: 29vh;
     padding: 20px;
-
 
     cursor: grab;
 
@@ -213,6 +211,8 @@
 
 .workspace:has(.paper-furl-btn:hover) {
     background-image: url("paperFurl.png");
+    background-size: cover; 
+
 }
 
 .rules {

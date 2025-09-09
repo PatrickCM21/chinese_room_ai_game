@@ -54,14 +54,15 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
         popupStyle = {
             position: "absolute",
             width: "auto",
-            height: "120px",
+            height: "auto",
             top: position.top,
             left: position.left,
             right: position.right,
             bottom: position.bottom
         }
         dataStyle = {
-            paddingRight: "10px"
+            display: "flex",
+            flexDirection: "row",
         }
     } else {
         btnClass = "popup-btns-bottom"
@@ -74,8 +75,8 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
 
     return (
         <div className="popup" key={'dialogue-box'} style={popupStyle}>
-            <section className="popup-data" >
-                <div className="popup-text" style={dataStyle}>
+            <section className="popup-data" style={dataStyle}>
+                <div className="popup-text">
                     {text}
 
                 </div>

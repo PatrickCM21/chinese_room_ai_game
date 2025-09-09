@@ -38,7 +38,6 @@ export default function Popups({orderAnswerArr}) {
     }, [dialogue])
 
     if (currentPopup === null) return;
-    if (isTutorial) console.log("tutorial render")
     return (
         <TutorialContext value={[isTutorial, setIsTutorial]}>
             {!isTutorial ? <div className="popups" key={key}>

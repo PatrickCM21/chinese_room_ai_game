@@ -26,7 +26,7 @@ const orderAnswerContainer = {
 }   
 
 // Used to toggle api
-const useAPI = true;
+const useAPI = false;
 
 let fetchedOnce = import.meta.hot?.data?.fetchedOnce ?? false;
 if (import.meta.hot) {
@@ -40,6 +40,7 @@ export default function Desk({orderAnswerArr}) {
     const [fetchedData, setFetchedData] = React.useState({})
     const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
+    const [level, setLevel] = React.useContext(LevelContext).level
 
 
     const [orderAnswer, setOrderAnswer] = orderAnswerArr
@@ -48,6 +49,7 @@ export default function Desk({orderAnswerArr}) {
         items: [
             {"id":"1","character":"恨"},
             {"id":"2","character":"我"},
+            {"id":"25","character":"中"},
             {"id":"3","character":"好"},
         ]
         },
@@ -61,8 +63,8 @@ export default function Desk({orderAnswerArr}) {
         inactive: [
             {
                 id: 1,
-                order: "你",
-                answer: "我"
+                order: "中",
+                answer: "中"
             }
         ],
         active: [
@@ -93,19 +95,20 @@ export default function Desk({orderAnswerArr}) {
     React.useEffect(() => {
         if (!currentlyPlaying) return;
         if (!fetchedData) return;
+        if (!useAPI) return
         if (appliedFetchedOnce) return;
         setCharacters([
         { id: "dictionary", items: fetchedData.data.dictionary ?? [] },
         { id: "paper", items: [] },
         ]);
         setRules({
-        inactive: [],
-        active: fetchedData.data.rules ?? [],
+        inactive: fetchedData.data.rules.slice(4),
+        active: fetchedData.data.rules.slice(0,4) ?? [],
         });
         setAppliedFetchedOnce(true);
-
-
     }, [currentlyPlaying, fetchedData, appliedFetchedOnce]);
+
+
 
     const generateNewOrder = React.useCallback(() => {
         if (!rules.active?.length) return;
@@ -134,7 +137,7 @@ export default function Desk({orderAnswerArr}) {
     const ruleBookImg = React.useRef(null)
 
 
-    const orderDelay = 10 * 1000; // 10 seconds
+    const orderDelay = 20 * 1000; // 10 seconds
 
     React.useEffect(() => {
         if (!currentlyPlaying) return
@@ -142,6 +145,14 @@ export default function Desk({orderAnswerArr}) {
         return (() => clearInterval(interval))
     }, [currentlyPlaying, generateNewOrder])
 
+    React.useEffect(() => {
+        if (level.level === 0) return;
+        setRules(prev => {
+            const newRules = prev.inactive.splice(0,4)
+            prev.active.push(...newRules)
+            return prev
+        })        
+    }, [level.level])
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -220,9 +231,6 @@ export default function Desk({orderAnswerArr}) {
         const activeContainerIndex = characters.findIndex(c => c.id === activeContainerId)
 
         const activeObj = characters[activeContainerIndex].items.find(item => item.id === activeId)
-
-        console.log(activeContainerId)
-        console.log(overContainerId)
 
         if (!activeContainerId || !overContainerId) return;
 
@@ -456,8 +464,8 @@ export default function Desk({orderAnswerArr}) {
                 <DictionaryUI 
                     dictionary={characters.find(container => container.id === "dictionary")} 
                     ref={dictionaryUIRef} 
-                    startPos={{x: 150, y: 150}} 
                     disabled={parentDisabled}
+                    rules={rules}
                 />
                 
                 <button className="rules" onClick={openRuleBook}>
@@ -465,7 +473,6 @@ export default function Desk({orderAnswerArr}) {
                 
                 </button>
                 <RuleBook
-                    startPos={{x: 150, y: 150}} 
                     ref={ruleBookUIRef}
                     rules={rules}
                 />

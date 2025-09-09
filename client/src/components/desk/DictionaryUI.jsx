@@ -2,10 +2,13 @@ import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortabl
 import SortableDraggable from '../base_dnd/SortableDraggable'
 import DraggableAnywhere from "../base_dnd/DraggableAnywhere"
 import Droppable from '../base_dnd/Droppable'
+import { useWindowHeight, useWindowWidth } from '@react-hook/window-size'
 
 
-export default function DictionaryUI({ dictionary, ref, startPos, disabled }) {
+
+export default function DictionaryUI({ dictionary, ref, disabled, rules }) {
     const characterElements = dictionary.items.map(word => {
+        if (!rules.active.find(rule => rule.answer.split('').includes(word.character))) return
         return (
             <SortableDraggable key={word.id} id={word.id} className='draggable' type='character'>{word.character}</SortableDraggable>
         )
@@ -15,7 +18,7 @@ export default function DictionaryUI({ dictionary, ref, startPos, disabled }) {
         <DraggableAnywhere 
             id='dictionary-handle'
             ref={ref} 
-            startPos={startPos} 
+            startPos={{x: useWindowWidth() * 0.55, y: useWindowHeight() / 2 - 80}} 
             disabled={disabled} 
             className='dictionary-ui'
             type='container'

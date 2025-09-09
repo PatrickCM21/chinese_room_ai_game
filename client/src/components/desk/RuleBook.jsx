@@ -1,6 +1,8 @@
 import DraggableAnywhere from "../base_dnd/DraggableAnywhere"
 import { useState } from 'react'
-export default function RuleBook({ref, startPos, rules}) {
+import { useWindowHeight, useWindowWidth } from '@react-hook/window-size'
+
+export default function RuleBook({ref, rules}) {
 
     const [currPage, setCurrPage] = useState(1);
     const rulesPerPage = 4;
@@ -35,7 +37,7 @@ export default function RuleBook({ref, startPos, rules}) {
         <DraggableAnywhere 
             id='rulebook-handle'
             ref={ref} 
-            startPos={startPos} 
+            startPos={{x: useWindowWidth() * 0.75, y: useWindowHeight() / 2 - 120}} 
             className='rulebook-ui'
             type='container'
             off={true}

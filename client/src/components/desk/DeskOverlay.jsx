@@ -25,7 +25,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     const windowWidth = useWindowWidth();
     const [ orderAnswer, setOrderAnswer ] = orderAnswerArr;
     const [ rules, setRules ] = rulesList
-    const [level, setLevel] = React.useContext(LevelContext).level
+    const [ level, setLevel ] = React.useContext(LevelContext).level
     
     const [key, setKey] = React.useState(0);
     const paperContainerImg = React.useRef(null)
@@ -359,9 +359,10 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     function processResponse() {
         const receivedResponse = orderAnswer[orderAnswerContainer.PAPERCONTAINER].items[0];
         const question = rules.active.find((rule) => rule.order === receivedResponse.order)
+        const xpGainedPerOrder = 50;
 
         if (question.answer === receivedResponse.answer) {
-            updateLevel(10)
+            updateLevel(xpGainedPerOrder)
             orderAnswer[orderAnswerContainer.PAPERCONTAINER].items = []
         }
     }
