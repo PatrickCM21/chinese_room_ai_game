@@ -4,6 +4,7 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import React from 'react'
 import { v4 as newId } from 'uuid';
 import axios from "axios"
+import { Wheel } from 'react-custom-roulette-r19'
 
 import DictionaryUI from './DictionaryUI.jsx'
 import PaperDroppable from './PaperDroppable.jsx';
@@ -41,7 +42,15 @@ export default function Desk({orderAnswerArr}) {
     const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
     const [level, setLevel] = React.useContext(LevelContext).level
-
+    const [wheelPresent, setWheelPresent] = React.useState(false)
+    const [wheelData, setWheelData] = React.useState({})
+    const [winningNumber, setWinningNumber] = React.useState()
+    const consideredRule = React.useRef()
+    const [mustSpin, setMustSpin] = React.useState(false)
+    const [potentialChars, setPotentialChars] = React.useState([{"id":"1","character":"恨"},
+            {"id":"2","character":"我"},
+            {"id":"25","character":"中"},
+            {"id":"3","character":"好"}])
 
     const [orderAnswer, setOrderAnswer] = orderAnswerArr
     const [characters, setCharacters] = React.useState([{
@@ -62,7 +71,7 @@ export default function Desk({orderAnswerArr}) {
     const [rules, setRules] = React.useState({
         inactive: [
             {
-                id: 1,
+                id: 2,
                 order: "中",
                 answer: "中"
             }
@@ -97,10 +106,7 @@ export default function Desk({orderAnswerArr}) {
         if (!fetchedData) return;
         if (!useAPI) return
         if (appliedFetchedOnce) return;
-        setCharacters([
-        { id: "dictionary", items: fetchedData.data.dictionary ?? [] },
-        { id: "paper", items: [] },
-        ]);
+        setPotentialChars(fetchedData.data.dictionary);
         setRules({
         inactive: fetchedData.data.rules.slice(4),
         active: fetchedData.data.rules.slice(0,4) ?? [],
@@ -137,7 +143,7 @@ export default function Desk({orderAnswerArr}) {
     const ruleBookImg = React.useRef(null)
 
 
-    const orderDelay = 20 * 1000; // 10 seconds
+    const orderDelay = 2 * 1000; // 10 seconds
 
     React.useEffect(() => {
         if (!currentlyPlaying) return
@@ -152,7 +158,58 @@ export default function Desk({orderAnswerArr}) {
             prev.active.push(...newRules)
             return prev
         })        
+        if (level.level >= 2) {
+            setRules(prev => {
+                return {
+                    ...prev,
+                    active: prev.active.map(rule => {
+                        return {id: rule.id, order: rule.order, answer: "???"}
+                    })
+                }
+            })        
+        }
     }, [level.level])
+
+    function updateRule(order) {
+        
+        let data = [];
+        for (let i = 0; i < 10; i++) {
+            let prizeChars = [];
+            for (let j = 0; j < 3; j++) {
+                const randInd = Math.floor(Math.random() * potentialChars.length)
+                prizeChars.push(potentialChars[randInd].character)
+            }
+            const color = i % 2 === 0 ? 'green' : 'white';
+            data.push({ option: prizeChars.join(''), style: { backgroundColor: color, textColor: 'black' } })
+        }
+        consideredRule.current = order
+        setWheelData(data)
+        setWinningNumber(Math.floor(Math.random() * data.length))
+        setWheelPresent(true)
+
+        requestAnimationFrame(() => {
+            setMustSpin(true);
+        });
+
+    }
+
+    function finishSpinning() {
+        setTimeout(() => {
+            setMustSpin(false)
+            setWheelPresent(false)
+            setRules(prev => {
+                return {
+                    ...prev,
+                    active: prev.active.map(rule => {
+                        if (rule.order === consideredRule.current) {
+                                return {...rule, answer: wheelData[winningNumber].option}
+                            } else return rule
+                        })
+                }
+            })
+        }, 2 * 1000)
+
+    }
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -429,6 +486,18 @@ export default function Desk({orderAnswerArr}) {
 
     return (
         <>
+            {wheelPresent && wheelData.length > 0 && 
+            <div className="spinner-wheel">
+                <Wheel
+                    mustStartSpinning={mustSpin}
+                    prizeNumber={winningNumber}
+                    data={wheelData}
+                    backgroundColors={['#3e3e3e', '#df3428']}
+                    textColors={['#ffffff']}
+                    onStopSpinning={finishSpinning}
+                    spinDuration={0.3}
+                />
+            </div>}
             <DeskOverlay orderAnswerArr = {[orderAnswer, setOrderAnswer]} rulesList = {[rules, setRules]}/>
 
             <section id='desk'>
@@ -475,6 +544,7 @@ export default function Desk({orderAnswerArr}) {
                 <RuleBook
                     ref={ruleBookUIRef}
                     rules={rules}
+                    updateRule={updateRule}
                 />
 
                 <DragOverlay

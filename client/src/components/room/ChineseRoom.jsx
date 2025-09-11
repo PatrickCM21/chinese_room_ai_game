@@ -18,7 +18,7 @@ export default function ChineseRoom() {
     }
 
     useEffect(() => {
-        if (xp > getXpRequired(level)) {
+        if (xp >= getXpRequired(level)) {
             executeLevelUp()
         }
     }, [xp])
@@ -49,12 +49,6 @@ export default function ChineseRoom() {
                     <div className='level-progress' style={levelProgressStyle}>
 
                     </div>
-                </div>
-            </div>
-            <div className="house">
-
-                <div className="chinese-writer">
-
                 </div>
             </div>
 

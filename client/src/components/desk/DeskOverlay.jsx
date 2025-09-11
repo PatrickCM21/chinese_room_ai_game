@@ -359,7 +359,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     function processResponse() {
         const receivedResponse = orderAnswer[orderAnswerContainer.PAPERCONTAINER].items[0];
         const question = rules.active.find((rule) => rule.order === receivedResponse.order)
-        const xpGainedPerOrder = 50;
+        const xpGainedPerOrder = 80;
 
         if (question.answer === receivedResponse.answer) {
             updateLevel(xpGainedPerOrder)
@@ -416,9 +416,12 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
                 </div>
                 
             </div>
-            <button className='stapler' onClick={openStapler}>
-                <img src='stapler.png' alt='stapler button'></img>
+            <div className='stapler'>
+                <button onClick={openStapler}>
+                    <img src='stapler.png' alt='stapler button'></img>
 
+                    
+                </button>
                 <Droppable 
                     id='stapler' 
                     className='stapler-ui' 
@@ -427,7 +430,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
                     >
                     {staplerItemsElements}
                 </Droppable>
-            </button>
+            </div>
             <DragOverlay
                 > 
                 {activeId && getActiveItem().type !== 'responses' ? (

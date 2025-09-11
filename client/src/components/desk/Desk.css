@@ -16,8 +16,8 @@
     position: relative;
 }
 
-.stapler {
-    all: unset;
+.stapler     {
+    
     position: absolute;
     height: 40vh;
     width: 40vh;
@@ -29,7 +29,11 @@
 
 }
 
-.stapler > img {
+.stapler > button {
+    all: unset;
+}
+
+.stapler > button > img {
     height: 40vh;
     margin: 0;
     position: absolute;
@@ -339,6 +343,11 @@
 .rules {
     grid-area: rules;
 
+}
+
+.spinner-wheel {
+    position: absolute;
+    
 }
 
 

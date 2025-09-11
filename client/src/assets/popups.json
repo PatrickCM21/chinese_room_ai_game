@@ -17,7 +17,7 @@
                 ]
             },
             {
-                "text": "This is a game is based on 'The Chinese Room Argument'. It is a philosophical argument by John Searle that aims to conclusively decide upon whether modern electrical computers can ever 'understand' the things they've been programmed to do.",
+                "text": "This is a game is based on 'The Chinese Room Argument'. It's a philosophical argument by John Searle that aims to conclusively decide upon whether modern electrical computers can ever 'understand' the things they've been programmed to do.",
                 "buttons": [
                     {
                         "id": 1,
@@ -143,6 +143,126 @@
                         "goto": null
                     }
                 ]
+            }
+        ]
+    },
+    {
+        "popups": [
+        {
+            "id": 0,
+            "text": "Congratulations, you're doing an excellent job so far! Just one question for you, do you feel like doing this is teaching you to better understand Chinese?",
+            "buttons": [
+                { "id": 1, "text": "Yes", "goto": 1 },
+                { "id": 2, "text": "No", "goto": 3 }
+            ]
+            },
+            {
+            "id": 1,
+            "text": "Really? So if someone texted you in Chinese right now, with one of the rules in that rulebook, could you intelligently respond?",
+            "buttons": [
+                { "id": 1, "text": "Yes", "goto": 2 },
+                { "id": 2, "text": "No", "goto": 3 }
+            ]
+            },
+            {
+            "id": 2,
+            "text": "I'm going to have to disagree with you there, I'll explain why.",
+            "buttons": [
+                { "id": 1, "text": "Go on", "goto": 4 }
+            ]
+            },
+            {
+            "id": 3,
+            "text": "You are right there. But let's explore why.",
+            "buttons": [
+                { "id": 1, "text": "Go on", "goto": 4 }
+            ]
+            },
+            {
+            "id": 4,
+            "text": "Whether you 'understand' what you are saying depends on the difference between two linguistic concepts, those being 'syntax' and 'semantics'. You can think of syntax as making grammatically correct sentences, say “The big red car” instead of “The red big car” (you might need to read that again). Meanwhile, semantics is about the inherent meaning of words, the concepts of 'red', 'big' and 'car'. When you are answering with your Chinese letters, which do you think you're using?",
+            "buttons": [
+                { "id": 1, "text": "Syntax", "goto": 5 },
+                { "id": 2, "text": "Semantics", "goto": 6 }
+            ]
+            },
+            {
+            "id": 5,
+            "text": "That's right! Your rulebook is telling you exactly how to construct an output given an input, but there's nothing there that teaches you why a given output should occur from those inputs. Or is there? Do you think with enough time and enough rules you would be able to fully understand Chinese?",
+            "buttons": [
+                { "id": 1, "text": "Yes", "goto": 7 },
+                { "id": 2, "text": "No", "goto": 7 }
+            ]
+            },
+            {
+            "id": 6,
+            "text": "Not quite, that would mean you understand the meaning behind all the characters your placing. But in your case you understand how to place them in the correct order, the syntax, but there's nothing there that teaches you why you should be placing them in that order, the semantics. Or is there? Do you think with enough time and enough rules you would be able to fully understand Chinese?",
+            "buttons": [
+                { "id": 1, "text": "Yes", "goto": 7 },
+                { "id": 2, "text": "No", "goto": 7 }
+            ]
+            },
+            {
+            "id": 7,
+            "text": "Well that's the interesting thing. Because from the outside you would appear to understand Chinese. Any native speaker can ask you any question and you would have the ability to say the right thing. Whether Geography, History, or Math, they could ask you a question and you could say the right thing. But you would never be able to know what your saying. This becomes obvious if you think about how you'd respond if you were asked your height in Chinese. If someone asked in English you could be honest, but how would you as a worker in this system respond?",
+            "buttons": [
+                { "id": 1, "text": "Okay, but what's your point", "goto": 8 }
+            ]
+            },
+            {
+            "id": 8,
+            "text": "If you hadn't realised yet, in this situation, you are the brain of a computer. You are given a request (user input), use your instructions to make your response (program code), and put it in the responses pile (output). But I think I've done enough talking, how about you get back to work and we'll discuss more soon.",
+            "buttons": [
+                { "id": 1, "text": "I hate working", "goto": null },
+                { "id": 2, "text": "Finally", "goto": null }
+            ]
+            }
+        ]
+    },
+    {
+        "popups": [
+            {
+            "id": 0,
+            "text": "So, how was that, do you understand Chinese any better now?",
+            "buttons": [
+                { "id": 1, "text": "Of course", "goto": 1 },
+                { "id": 2, "text": "Of course not", "goto": 2 }
+            ]
+            },
+            {
+            "id": 1,
+            "text": "If you are confident that you can make the jump from syntax to semantics, you may be a proponent of so-called 'strong AI', that in a matter of time our computers are going to achieve 'AGI' - Artificial General Intelligence. But let me tell you why you should be a bit skeptical of that.",
+            "buttons": [
+                { "id": 1, "text": "Ok", "goto": 3 }
+            ]
+            },
+            {
+            "id": 2,
+            "text": "Right, as discussed you cannot make the jump from syntax to semantics. This has implications for the theory of 'strong AI', that in a matter of time our computers are going to achieve 'AGI' - Artificial General Intelligence. Let me try and explain why this is unlikely to be the case.",
+            "buttons": [
+                { "id": 1, "text": "Ok", "goto": 3 }
+            ]
+            },
+            {
+            "id": 3,
+            "text": "As I mentioned previously, like you right now, computers are just highly complicated symbol manipulation machines. At the most basic level, they are given a series of inputs, represented as either 1 or 0. Then, based on the program it's been given, it creates a new series of 1's and 0's to send back out. At a high level, this process may be interpreted by us as music, video, colour, or any number of other meaningful things. But to the computer, it's just moving around 1's and 0's, exactly the same way as to you in the Chinese Room, you're just moving around characters.",
+            "buttons": [
+                { "id": 1, "text": "But can't the system learn the meaning?", "goto": 4 }
+            ]
+            },
+            {
+            "id": 4,
+            "text": "A computer can never 'learn' in the way that we think of learning, because it's entirely limited to syntax. A computer never knows why it manipulates systems in different ways, even if to us it correctly does so every time. However, I will admit, this argument is based on programs that are pre-defined. I've given you rules that provide an exact answer every time, but that's not how modern AI LLM's - 'language learning models' work.",
+            "buttons": [
+                { "id": 1, "text": "How do those work?", "goto": 5 }
+            ]
+            },
+            {
+            "id": 5,
+            "text": "Instead of telling you, I think I'll show you. Now, for every rule you won't just be following direct programming, you're going to be randomly generating the response on the fly. Go check out the rule book and you'll see what I mean, good luck!",
+            "buttons": [
+                { "id": 1, "text": "Okay", "goto": null }
+            ]
             }
         ]
     }

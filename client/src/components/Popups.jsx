@@ -13,7 +13,6 @@ export default function Popups({orderAnswerArr}) {
     const [dialogue, setDialogue] = React.useContext(LevelContext).dialogue
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
     const dialogueClosed = React.useRef(false)
-    const [key, setKey] = React.useState(0)
     const [isTutorial, setIsTutorial] = React.useState(false)
 
     let currentPopup
@@ -29,18 +28,20 @@ export default function Popups({orderAnswerArr}) {
         } else {
             dialogueClosed.current = true;
             setCurrentlyPlaying(true)
-            setKey(prev => prev + 1)
+            setIsTutorial(false)
         }
     }
     
     React.useEffect(() => {
         setPopupIndex(0)
+        dialogueClosed.current = false;
+        setCurrentlyPlaying(false)
     }, [dialogue])
 
     if (currentPopup === null) return;
     return (
         <TutorialContext value={[isTutorial, setIsTutorial]}>
-            {!isTutorial ? <div className="popups" key={key}>
+            {!isTutorial ? <div className="popups" >
                 <PopupItem
                     text={currentPopup[popupIndex].text}
                     buttons={currentPopup[popupIndex].buttons}
