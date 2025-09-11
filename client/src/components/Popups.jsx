@@ -48,6 +48,7 @@ export default function Popups({orderAnswerArr}) {
                     updateDialogue={updateDialogue}
                     actions={currentPopup[popupIndex]?.actions}
                     orderAnswerArr={orderAnswerArr}
+                    help={currentPopup[popupIndex]?.help}
                 />
             </div>
             : <PopupItem

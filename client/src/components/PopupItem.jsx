@@ -1,10 +1,16 @@
 import { useEffect, useContext, useState } from 'react'
 import { TutorialContext } from './Context'
+import axios from "axios"
 
-export default function PopupItem({text, buttons, updateDialogue, actions, orderAnswerArr}) {
+
+export default function PopupItem({text, buttons, updateDialogue, actions, orderAnswerArr, help=false}) {
     const [orderAnswer, setOrderAnswer] = orderAnswerArr
     const [isTutorial, setIsTutorial] = useContext(TutorialContext)
     const [position, setPosition] = useState({})
+    const [helpVisible, setHelpVisible] = useState(false)
+    const [helpData, setHelpData] = useState('')
+    const [helpDisabled, setHelpDisabled] = useState(false)
+
     useEffect(() => {
         if (actions === -1) {
             setIsTutorial(true)
@@ -69,6 +75,20 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
 
     }
 
+    async function requestHelp(data) {
+        setHelpVisible(true)
+        setHelpDisabled(true)
+        const response = await axios.post("http://localhost:8080/requesthelp", {data: data})
+        setHelpData(response.data)
+    }
+
+    function closeHelp() {
+        setHelpData('')
+        setHelpData(false)
+        setHelpDisabled(false)
+        setHelpVisible(false)
+    }
+
     const buttonElements = buttons.map(btn => {
         return <button key={btn.id} onClick={() => updateDialogue(btn.goto)}>{btn.text}</button>
     })
@@ -83,7 +103,27 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
                 <div className={`popup-btns ${btnClass}`}>
                     {buttonElements}
                 </div>
+                {help &&
+                <button className="popup-help" onClick={() => requestHelp(text)} disabled={helpDisabled}>
+                    <img src="question.png" alt="question button"></img>
+                </button>
+                }
             </section>
+            {helpVisible &&
+                <div className="help-box">
+                    {helpData ?
+                    <>
+                        <h2>AI Help:</h2>
+                        <p>{helpData}</p>
+                        <div className="popup-btns" >
+                            <button onClick={closeHelp}>Close</button>
+
+                        </div>
+                    </>
+                    : <p>Loading...</p>
+                    }
+                </div>
+            }
         </div>
     )
 }

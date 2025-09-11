@@ -166,25 +166,26 @@
             },
             {
             "id": 2,
-            "text": "I'm going to have to disagree with you there, I'll explain why.",
+            "text": "I'm going to have to disagree with you there, I'll explain why. And just before I get into the finer detailsm note that a question mark will appear in the top right hand corner for more complicated stages (you'll see it on the dialogue box) which you can use to get some AI help to assist your understanding!",
             "buttons": [
-                { "id": 1, "text": "Go on", "goto": 4 }
+                { "id": 1, "text": "Thanks, go on", "goto": 4 }
             ]
             },
             {
             "id": 3,
-            "text": "You are right there. But let's explore why.",
+            "text": "You are right there. But let's explore why. And just before I get into the finer detailsm note that a question mark will appear in the top right hand corner for more complicated stages (you'll see it on the dialogue box) which you can use to get some AI help to assist your understanding!",
             "buttons": [
-                { "id": 1, "text": "Go on", "goto": 4 }
+                { "id": 1, "text": "Thanks, go on", "goto": 4 }
             ]
             },
             {
             "id": 4,
-            "text": "Whether you 'understand' what you are saying depends on the difference between two linguistic concepts, those being 'syntax' and 'semantics'. You can think of syntax as making grammatically correct sentences, say “The big red car” instead of “The red big car” (you might need to read that again). Meanwhile, semantics is about the inherent meaning of words, the concepts of 'red', 'big' and 'car'. When you are answering with your Chinese letters, which do you think you're using?",
+            "text": "'Understanding' can mean two things. Syntax is putting words in a correct order. Semantics is what the words mean. When you follow the rulebook, which are you using?",
             "buttons": [
                 { "id": 1, "text": "Syntax", "goto": 5 },
                 { "id": 2, "text": "Semantics", "goto": 6 }
-            ]
+            ],
+            "help": true
             },
             {
             "id": 5,
@@ -192,7 +193,8 @@
             "buttons": [
                 { "id": 1, "text": "Yes", "goto": 7 },
                 { "id": 2, "text": "No", "goto": 7 }
-            ]
+            ],
+            "help": true
             },
             {
             "id": 6,
@@ -200,22 +202,24 @@
             "buttons": [
                 { "id": 1, "text": "Yes", "goto": 7 },
                 { "id": 2, "text": "No", "goto": 7 }
-            ]
+            ],
+            "help": true
             },
             {
             "id": 7,
-            "text": "Well that's the interesting thing. Because from the outside you would appear to understand Chinese. Any native speaker can ask you any question and you would have the ability to say the right thing. Whether Geography, History, or Math, they could ask you a question and you could say the right thing. But you would never be able to know what your saying. This becomes obvious if you think about how you'd respond if you were asked your height in Chinese. If someone asked in English you could be honest, but how would you as a worker in this system respond?",
+            "text": "Well that's the interesting thing. Because from the outside you would appear to understand Chinese. Any native speaker can ask you any question and you would have the ability to say the right thing. Whether Geography, History, or Math, they could ask you a question and you could say the right thing. But you would never be able to know what your saying.",
             "buttons": [
                 { "id": 1, "text": "Okay, but what's your point", "goto": 8 }
-            ]
+            ],
+            "help": true
             },
             {
             "id": 8,
-            "text": "If you hadn't realised yet, in this situation, you are the brain of a computer. You are given a request (user input), use your instructions to make your response (program code), and put it in the responses pile (output). But I think I've done enough talking, how about you get back to work and we'll discuss more soon.",
+            "text": " If you hadn't realised yet, in this situation, you are the brain of a computer, the 'CPU' - Central Processing Unit. You are given a request (user input), use your instructions to make your response (program code), and put it in the responses pile (output). But I think I've done enough talking, how about you get back to work and we'll discuss more soon.",
             "buttons": [
-                { "id": 1, "text": "I hate working", "goto": null },
-                { "id": 2, "text": "Finally", "goto": null }
-            ]
+                { "id": 1, "text": "Let's do it", "goto": null }
+            ],
+            "help": true
             }
         ]
     },
@@ -234,36 +238,106 @@
             "text": "If you are confident that you can make the jump from syntax to semantics, you may be a proponent of so-called 'strong AI', that in a matter of time our computers are going to achieve 'AGI' - Artificial General Intelligence. But let me tell you why you should be a bit skeptical of that.",
             "buttons": [
                 { "id": 1, "text": "Ok", "goto": 3 }
-            ]
+            ],
+            "help": true
             },
             {
             "id": 2,
             "text": "Right, as discussed you cannot make the jump from syntax to semantics. This has implications for the theory of 'strong AI', that in a matter of time our computers are going to achieve 'AGI' - Artificial General Intelligence. Let me try and explain why this is unlikely to be the case.",
             "buttons": [
                 { "id": 1, "text": "Ok", "goto": 3 }
-            ]
+            ],
+            "help": true
             },
             {
             "id": 3,
             "text": "As I mentioned previously, like you right now, computers are just highly complicated symbol manipulation machines. At the most basic level, they are given a series of inputs, represented as either 1 or 0. Then, based on the program it's been given, it creates a new series of 1's and 0's to send back out. At a high level, this process may be interpreted by us as music, video, colour, or any number of other meaningful things. But to the computer, it's just moving around 1's and 0's, exactly the same way as to you in the Chinese Room, you're just moving around characters.",
             "buttons": [
                 { "id": 1, "text": "But can't the system learn the meaning?", "goto": 4 }
-            ]
+            ],
+            "help": true
             },
             {
             "id": 4,
-            "text": "A computer can never 'learn' in the way that we think of learning, because it's entirely limited to syntax. A computer never knows why it manipulates systems in different ways, even if to us it correctly does so every time. However, I will admit, this argument is based on programs that are pre-defined. I've given you rules that provide an exact answer every time, but that's not how modern AI LLM's - 'language learning models' work.",
+            "text": "A computer can never 'learn' in the way that we think of learning, because it's entirely limited to syntax. A computer never knows why it manipulates systems in different ways, even if to us it correctly does so every time. However, I will admit, this argument is based on programs that are pre-defined. I've given you rules that provide an exact answer every time, but that's not how modern AI LLM's - 'Large Language Models' work.",
             "buttons": [
                 { "id": 1, "text": "How do those work?", "goto": 5 }
-            ]
+            ],
+            "help": true
             },
             {
             "id": 5,
             "text": "Instead of telling you, I think I'll show you. Now, for every rule you won't just be following direct programming, you're going to be randomly generating the response on the fly. Go check out the rule book and you'll see what I mean, good luck!",
             "buttons": [
                 { "id": 1, "text": "Okay", "goto": null }
-            ]
+            ],
+            "help": true
             }
         ]
+    },
+    {
+        "popups": [
+        {
+        "id": 0,
+        "text": "Okay, so how was that, do you think what you were responding with made any sense?",
+        "buttons": [
+            { "id": 1, "text": "No, how could it?", "goto": 1 },
+            { "id": 2, "text": "Yes", "goto": 2 }
+        ]
+        },
+        {
+        "id": 1,
+        "text": "Precisely right, each generation was just a random series of Chinese characters. But I promise that there is a connection here to AI.",
+        "buttons": [
+            { "id": 1, "text": "Ok, what is it", "goto": 3 }
+        ]
+        },
+        {
+        "id": 2,
+        "text": "Not exactly, all the options you generated were actually a completely random series of characters. But I promise that there is a connection here to AI.",
+        "buttons": [
+            { "id": 1, "text": "Ok, what is it", "goto": 3 }
+        ]
+        },
+        {
+        "id": 3,
+        "text": "You can think of this as the initial training state for an LLM, which is being trained on a 'probabilistic' model. AI chatbots like ChatGPT start off knowing nothing, and randomly guessing at responses from given inputs. So all the letters you just made would have made no sense to the recipient, because the syntax would be completely wrong. If asked “what colour is a tree?” it may have responded “balloon giant the frog”, who knows.",
+        "buttons": [
+            { "id": 1, "text": "So how do we make it make sense", "goto": 4 }
+        ],
+        "help": true
+        },
+        {
+        "id": 4,
+        "text": "That''s where feedback comes in. You can let it know when it's made a mistake, and let it try again. Think of it like when you next generate a random response, it will tweak the odds on the spinwheel to see if it gets closer or further to a sensible answer when asked the same question again. And so on it goes for thousands of attempts until you end up getting something closer to “the colour is brown” to the “what colour is a tree?” question. So, every time an LLM answers your question you can think of it just continually making good guesses as to what a proper answer would be.",
+        "buttons": [
+            { "id": 1, "text": "But why go through this extra effort", "goto": 5 }
+        ],
+        "help": true
+        },
+        {
+        "id": 5,
+        "text": "This is what allows LLM models to be dynamic and evolving. If you need a human to handcraft every response to every possible question it will take quite literally forever. To a 'hard-coded' machine the similarity between “what colour is a tree?” and “what colour are trees?” is none. They both need a separate encoding, as each is a separate syntactic arrangement of characters. However, to an LLM, these things can be interpreted as similar.",
+        "buttons": [
+            { "id": 1, "text": "How does it do that?", "goto": 6 }
+        ],
+        "help": true
+        },
+        {
+        "id": 6,
+        "text": "That's the scary thing, we don't know. They do so through Neural Networks, which aim to mimic the brain, but the methods that they come up with to create their answers are incomprehensible to scientists. However, what we do know is that at the most fundamental level they are still dealing with the same 1's and 0's that the computer running the hard-coded program is dealing with. For all their power, they cannot escape their hardware. The same as humans are constrained to their biology. You, in the Chinese Room, cannot think yourself into understanding Chinese, the same as the computer cannot “think” itself into understanding the meaning behind its flipping of 1's and 0's.",
+        "buttons": [
+            { "id": 1, "text": "So where does that leave us", "goto": 7 }
+        ],
+        "help": true
+        },
+        {
+        "id": 7,
+        "text": "This leaves us with the notion that AI as we know it likely won't become 'conscious'. It doesn't discount the idea of new forms of intelligence forming, but just that computers as we've built them today are constrained in this way. But this doesn't discount the importance that emerging AI systems will have in changing the way we live, work, and learn. Just that, maybe, we should be careful how much we trust a system that literally doesn't know what it is talking about.",
+        "buttons": [],
+        "help": true
+        }
+    ]
     }
+    
 ]
