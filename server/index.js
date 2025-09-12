@@ -6,7 +6,7 @@ const app = express()
 
 const cors = require('cors')
 const corsOptions = {
-    origin: ["http://localhost:5173, https://chinese-room-ai-game-client.vercel.app"]
+    origin: ["http://localhost:5173", "https://chinese-room-ai-game-client.vercel.app"]
 }
 
 app.use(express.json())
