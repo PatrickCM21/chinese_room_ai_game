@@ -14,6 +14,10 @@ app.use(cors(corsOptions))
 
 const openai = new OpenAI();
 
+app.get("/", async (req, res) => {
+    res.send("server is running.")
+})
+
 app.get("/initialise", async (req, res) => {
     const system = `You are a JSON generator. Return ONLY JSON that matches the schema. 
     - Use Simplified Chinese characters.
