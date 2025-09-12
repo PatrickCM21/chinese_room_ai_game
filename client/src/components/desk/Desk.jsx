@@ -110,7 +110,7 @@ export default function Desk({orderAnswerArr}) {
             fetchAPI()
             console.log("called api")
         }
-    }, [startAPICall])
+    }, [speaksChinese])
 
 
     React.useEffect(() => {
