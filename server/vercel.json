@@ -1,0 +1,22 @@
+{
+    "functions": {
+        "api/**/*.js": {
+        "runtime": "nodejs20.x",
+        "memory": 1024,
+        "maxDuration": 10
+        }
+    },
+    "headers": [
+        {
+        "source": "/api/(.*)",
+        "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "https://chinese-room-ai-game-client.vercel.app" },
+            { "key": "Vary", "value": "Origin" },
+            { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
+            { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" },
+            { "key": "Access-Control-Allow-Credentials", "value": "true" }
+        ]
+        }
+    ],
+    "regions": ["syd1"]
+}
