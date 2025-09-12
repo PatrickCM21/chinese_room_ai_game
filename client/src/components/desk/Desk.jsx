@@ -13,6 +13,7 @@ import paperRuffleSound from '../../assets/sounds/paperRuffle.wav'
 import bookOpenSound from '../../assets/sounds/bookOpen.wav'
 import bookCloseSound from '../../assets/sounds/bookClose.wav'
 import swooshSound from '../../assets/sounds/swoosh.wav'
+import tileSound from '../../assets/sounds/tile.wav'
 
 import DictionaryUI from './DictionaryUI.jsx'
 import PaperDroppable from './PaperDroppable.jsx';
@@ -52,8 +53,9 @@ export default function Desk({orderAnswerArr}) {
     const [playBookOpen] = useSound(bookOpenSound)
     const [playBookClose] = useSound(bookCloseSound)
     const [playSwoosh] = useSound(swooshSound)
+    const [playTile] = useSound(tileSound)
 
-    const [fetchedData, setFetchedData] = React.useState({})
+    const [fetchedData, setFetchedData] = React.useState(null)
     const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
     const [level, setLevel] = React.useContext(LevelContext).level
@@ -101,6 +103,8 @@ export default function Desk({orderAnswerArr}) {
         const language = speaksChinese ? "Chinese" : "Greek"
         const response = await axios.get(`${host}/initialise`, {params: {symbol: language}})
         setFetchedData(response)
+        console.log("received data")
+        console.log(response)
     }
 
     React.useEffect(() => {
@@ -405,7 +409,7 @@ export default function Desk({orderAnswerArr}) {
                 setActiveId(null)
                 return
             }
-
+            playTile()
             const container = characters[containerIndex]
             const activeIndex = container.items.findIndex(item => item.id === active.id)
             const overIndex = container.items.findIndex(item => item.id === over.id)

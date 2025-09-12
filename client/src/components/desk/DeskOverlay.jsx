@@ -224,7 +224,6 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
 
 
                         if (activeContainerId === 'paper-container' && container.id === 'paper-container') {
-                            console.log("removed paper from container")
                             paperContainerImg.current.style.backgroundImage = 'url(paperContainerEmpty.png)'
                             return {
                                 ...container,
@@ -299,7 +298,6 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
                         ]
                     }
                 }
-                console.log(activeId)
                 if (overContainerId === 'paper-container' && container.id === 'paper-container') {
                     paperContainerImg.current.style.backgroundImage = 'url(paperContainer.png)'
                     tempHoverDropped=true
