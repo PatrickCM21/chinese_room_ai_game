@@ -6,7 +6,7 @@ const app = express()
 
 const cors = require('cors')
 const corsOptions = {
-    origin: ["http://localhost:5173"]
+    origin: ["http://localhost:5173, https://chinese-room-ai-game-client.vercel.app"]
 }
 
 app.use(express.json())
@@ -117,6 +117,4 @@ app.post("/requesthelp", async (req, res) => {
     }
 })
 
-app.listen(8080, () => {
-    console.log("Backend server set up on port 8080")
-})
+export default app
