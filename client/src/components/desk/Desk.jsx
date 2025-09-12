@@ -6,6 +6,14 @@ import { v4 as newId } from 'uuid';
 import axios from "axios"
 import { Wheel } from 'react-custom-roulette-r19'
 
+import useSound from 'use-sound';
+import spinSound from '../../assets/sounds/spin.mp3'
+import dingSound from '../../assets/sounds/ding.wav'
+import paperRuffleSound from '../../assets/sounds/paperRuffle.wav'
+import bookOpenSound from '../../assets/sounds/bookOpen.wav'
+import bookCloseSound from '../../assets/sounds/bookClose.wav'
+import swooshSound from '../../assets/sounds/swoosh.wav'
+
 import DictionaryUI from './DictionaryUI.jsx'
 import PaperDroppable from './PaperDroppable.jsx';
 import RuleBook from './RuleBook.jsx';
@@ -38,6 +46,13 @@ if (import.meta.hot) {
 
 
 export default function Desk({orderAnswerArr}) {
+    const [playSpin] = useSound(spinSound)
+    const [playDing] = useSound(dingSound)
+    const [playRuffle] = useSound(paperRuffleSound)
+    const [playBookOpen] = useSound(bookOpenSound)
+    const [playBookClose] = useSound(bookCloseSound)
+    const [playSwoosh] = useSound(swooshSound)
+
     const [fetchedData, setFetchedData] = React.useState({})
     const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
@@ -118,6 +133,7 @@ export default function Desk({orderAnswerArr}) {
 
     const generateNewOrder = React.useCallback(() => {
         if (!rules.active?.length) return;
+        playSwoosh()
         const randRule = Math.floor(Math.random() * rules.active.length);
         const newOrder = {
         id: newId(),
@@ -186,6 +202,7 @@ export default function Desk({orderAnswerArr}) {
         setWheelData(data)
         setWinningNumber(Math.floor(Math.random() * data.length))
         setWheelPresent(true)
+        playSpin()
 
         requestAnimationFrame(() => {
             setMustSpin(true);
@@ -193,7 +210,8 @@ export default function Desk({orderAnswerArr}) {
 
     }
 
-    function finishSpinning() {
+    function finishSpinning() { 
+        playDing()
         setTimeout(() => {
             setMustSpin(false)
             setWheelPresent(false)
@@ -223,9 +241,11 @@ export default function Desk({orderAnswerArr}) {
     function openDictionary() {
         const dictionaryEl = dictionaryUIRef.current;
         if (!dictionaryEl.style.visibility || dictionaryEl.style.visibility === "hidden") {
+            playBookOpen()
             dictionaryEl.style.visibility = "visible"
             dictionaryImg.current.src= "dictionaryOpen.png"
         } else {
+            playBookClose()
             dictionaryEl.style.visibility = "hidden"
             dictionaryImg.current.src= "dictionary.png"
 
@@ -236,9 +256,11 @@ export default function Desk({orderAnswerArr}) {
     function openRuleBook() {
         const ruleBookEl = ruleBookUIRef.current;
         if (!ruleBookEl.style.visibility || ruleBookEl.style.visibility === "hidden") {
+            playBookOpen()
             ruleBookEl.style.visibility = "visible"
             ruleBookImg.current.src= "rulesOpen.png"
         } else {
+            playBookClose()
             ruleBookEl.style.visibility = "hidden"
             ruleBookImg.current.src= "rules.png"
 
@@ -306,7 +328,6 @@ export default function Desk({orderAnswerArr}) {
                 if (container.id === activeContainerId) {
                     if (container.id === 'dictionary') {
 
-                        console.log("triggered duplicating in dic")
                         const currItemIndex = container.items.findIndex(item => item.id === activeId)
                         if (currItemIndex === -1) return container
                         
@@ -349,7 +370,6 @@ export default function Desk({orderAnswerArr}) {
 
                 const overItemIndex = container.items.findIndex(item => item.id === overId)
                 if (overItemIndex !== -1) {
-                    console.log("removed but indexing this time")
                     return {
                         ...container,
                         items: [
@@ -464,6 +484,7 @@ export default function Desk({orderAnswerArr}) {
 
     function createAnswer() {
         if (characters[characterContainer.PAPER].items.length === 0) return;
+        playRuffle()
         setOrderAnswer(prev => {
             return prev.map(container => {
                 if (container.id !== 'answers') return container
@@ -473,7 +494,8 @@ export default function Desk({orderAnswerArr}) {
                         ...container.items,
                         {
                             id: newId(),
-                            text: collectCharacters(characters[characterContainer.PAPER].items)
+                            text: collectCharacters(characters[characterContainer.PAPER].items),
+                            type: "answers"
                         }
                     ]
                 }
@@ -495,8 +517,10 @@ export default function Desk({orderAnswerArr}) {
                     backgroundColors={['#3e3e3e', '#df3428']}
                     textColors={['#ffffff']}
                     onStopSpinning={finishSpinning}
-                    spinDuration={0.3}
+                    spinDuration={0.4}
+                    disableInitialAnimation={true}
                 />
+                
             </div>}
             <DeskOverlay orderAnswerArr = {[orderAnswer, setOrderAnswer]} rulesList = {[rules, setRules]}/>
 

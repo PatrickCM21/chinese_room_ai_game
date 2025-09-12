@@ -3,7 +3,11 @@ import { useState, useContext } from 'react'
 import { useWindowHeight, useWindowWidth } from '@react-hook/window-size'
 import { LevelContext } from "../Context"
 
+import useSound from 'use-sound';
+import ruleMoveSound from '../../assets/sounds/ruleMove.wav'
+
 export default function RuleBook({ref, rules, updateRule=null}) {
+    const [playRuleMove] = useSound(ruleMoveSound)
     const [level, setLevel] = useContext(LevelContext).level
 
 
@@ -39,7 +43,7 @@ export default function RuleBook({ref, rules, updateRule=null}) {
     for (let i = 1; i < pageCount + 1; i++)  {
         pageButtons.push(
             <button 
-                onClick={() => setCurrPage(i)} 
+                onClick={() => {playRuleMove(); setCurrPage(i)}} 
                 className={currPage === i ? "active-btn" : ""}
                 key={`btn-${i}`}
             >{i}</button>

@@ -9,10 +9,19 @@ import { LevelContext } from '../Context.jsx';
 import Order from './Order.jsx';
 import Answer from './Answer.jsx';
 import Droppable from '../base_dnd/Droppable.jsx';
-
 import Response from './Response.jsx'
 
+import useSound from 'use-sound';
+import paperPlaceSound from '../../assets/sounds/paperPlace.wav'
+import stapleSound from '../../assets/sounds/staple.wav'
+import binSound from '../../assets/sounds/trash.mp3'
+
+
 export default function DeskOverlay({orderAnswerArr, rulesList}) {
+    const [playStaple] = useSound(stapleSound)
+    const [playPaperPlace] = useSound(paperPlaceSound)
+    const [playBin] = useSound(binSound)
+
     const orderAnswerContainer = {
     ORDER: 0,
     ANSWER: 1,
@@ -134,6 +143,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     }
 
     function createResponse() {
+        playStaple()
         setOrderAnswer(prev => {
             return prev.map(c => {
                 if (c.id === 'stapler') {
@@ -259,7 +269,6 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
         let tempHoverDroppedItem = null;
 
         setOrderAnswer(prev => {
-            console.log("updated location")
             return prev.map(container => {
                 if (overContainerId === 'stapler' && container.id === 'stapler') {
                     const existingItem = container.items.find(item => item.type === activeContainerId)
@@ -288,9 +297,8 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
                         ]
                     }
                 }
-
+                console.log(activeId)
                 if (overContainerId === 'paper-container' && container.id === 'paper-container') {
-                    console.log("updated paper container")
                     paperContainerImg.current.style.backgroundImage = 'url(paperContainer.png)'
                     tempHoverDropped=true
                     tempHoverDroppedItem = null
@@ -337,6 +345,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
         binImg.current.style.backgroundImage = 'url(binEmpty.png)'
 
         if (orderAnswer[orderAnswerContainer.BIN].items > 0) {
+            playBin()
             setOrderAnswer(prev => {
                 return prev.map((c) => {
                     if (c.id === 'bin') {
@@ -349,6 +358,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
         }
 
         if (orderAnswer[orderAnswerContainer.PAPERCONTAINER].items.length > 0) {
+            playPaperPlace()
             processResponse()
             paperContainerImg.current.style.backgroundImage = 'url(paperContainerEmpty.png)'
 
@@ -359,7 +369,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     function processResponse() {
         const receivedResponse = orderAnswer[orderAnswerContainer.PAPERCONTAINER].items[0];
         const question = rules.active.find((rule) => rule.order === receivedResponse.order)
-        const xpGainedPerOrder = 80;
+        const xpGainedPerOrder = 20;
 
         if (question.answer === receivedResponse.answer) {
             updateLevel(xpGainedPerOrder)

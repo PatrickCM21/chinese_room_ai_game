@@ -1,6 +1,9 @@
 import { useEffect, useContext, useState } from 'react'
 import { TutorialContext } from './Context'
 import axios from "axios"
+import useSound from 'use-sound';
+
+import swooshSound from '../assets/sounds/swoosh.wav'
 
 
 export default function PopupItem({text, buttons, updateDialogue, actions, orderAnswerArr, help=false}) {
@@ -10,12 +13,15 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
     const [helpVisible, setHelpVisible] = useState(false)
     const [helpData, setHelpData] = useState('')
     const [helpDisabled, setHelpDisabled] = useState(false)
+    const [playSwoosh] = useSound(swooshSound)
+    
 
     useEffect(() => {
         if (actions === -1) {
             setIsTutorial(true)
             setPosition({top: "50%", left: "50%", right: "auto", bottom: "auto"})
         } else if (actions === 0) {
+            playSwoosh()
             const newOrder = {
                 id: 0,
                 text: "你好吗",
