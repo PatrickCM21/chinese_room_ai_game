@@ -88,7 +88,7 @@
 }
 
 .popup-help:hover:enabled > img {
-    content: url("questionHighlight.png");
+    content: url("/questionHighlight.png");
     cursor: pointer;
 
 }

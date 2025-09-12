@@ -13,12 +13,14 @@ import Response from './Response.jsx'
 
 import useSound from 'use-sound';
 import paperPlaceSound from '../../assets/sounds/paperPlace.wav'
-import stapleSound from '../../assets/sounds/staple.wav'
+import staplerOpenSound from '../../assets/sounds/staplerOpen.wav'
+import stapleSound from '../../assets/sounds/stapler.wav'
 import binSound from '../../assets/sounds/trash.mp3'
 
 
 export default function DeskOverlay({orderAnswerArr, rulesList}) {
     const [playStaple] = useSound(stapleSound)
+    const [playOpenStapler] = useSound(staplerOpenSound)
     const [playPaperPlace] = useSound(paperPlaceSound)
     const [playBin] = useSound(binSound)
 
@@ -387,6 +389,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     }
 
     function openStapler() {
+        playOpenStapler()
         setStaplerOpen(prev => !prev)
     }
 

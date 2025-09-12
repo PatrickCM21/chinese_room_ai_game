@@ -23,6 +23,8 @@ function App() {
 
   const [currentlyPlaying, setCurrentlyPlaying] = useState(false)
 
+  const [speaksChinese, setSpeaksChinese] = useState()
+
   const [orderAnswer, setOrderAnswer] = useState([
     {
     id: "orders",
@@ -52,7 +54,7 @@ function App() {
 
   return (
     <>
-      <LevelContext value={{level: [level, setLevel], dialogue: [dialogue, setDialogue], currentlyPlaying: [currentlyPlaying, setCurrentlyPlaying]}}>
+      <LevelContext value={{level: [level, setLevel], dialogue: [dialogue, setDialogue], currentlyPlaying: [currentlyPlaying, setCurrentlyPlaying], speaksChinese: [speaksChinese, setSpeaksChinese]}}>
         <Popups orderAnswerArr={[orderAnswer, setOrderAnswer]}/>
         <ChineseRoom />
         <Desk orderAnswerArr={[orderAnswer, setOrderAnswer]}/>

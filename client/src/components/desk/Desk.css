@@ -1,6 +1,6 @@
 #desk {
     height: 50%;
-    background-image: url("desk.jpg");
+    background-image: url("/desk.jpg");
     margin: 0;
     padding: 0;
     background-size: contain;
@@ -91,7 +91,7 @@
 }
 
 .paper {
-    background-image: url("paper.png");
+    background-image: url("/paper.png");
     background-size: cover;
     width: 29vh;
     height: auto;
@@ -114,7 +114,7 @@
 }
 
 .response {
-    background-image: url("response.png");
+    background-image: url("/response.png");
     background-size: cover;
     width: 29vh;
     height: 29vh;
@@ -163,7 +163,7 @@
 
 .bin {
     grid-area: bin;
-    background-image: url("binEmpty.png");
+    background-image: url("/binEmpty.png");
     background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;
@@ -174,7 +174,7 @@
 .paper-container {
     grid-area: paper-container;
 
-    background-image: url("paperContainerEmpty.png");
+    background-image: url("/paperContainerEmpty.png");
     background-position: center center;
 
     background-size: contain;
@@ -193,7 +193,7 @@
     margin: 8px;
     padding: 2vh;
 
-    background-image: url("paper.png");
+    background-image: url("/paper.png");
     background-size: cover; 
 
     display: flex;
@@ -214,7 +214,7 @@
 }
 
 .workspace:has(.paper-furl-btn:hover) {
-    background-image: url("paperFurl.png");
+    background-image: url("/paperFurl.png");
     background-size: cover; 
 
 }

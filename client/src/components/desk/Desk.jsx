@@ -57,6 +57,7 @@ export default function Desk({orderAnswerArr}) {
     const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
     const [level, setLevel] = React.useContext(LevelContext).level
+    const [speaksChinese, setSpeaksChinese] = useContext(LevelContext).speaksChinese
     const [wheelPresent, setWheelPresent] = React.useState(false)
     const [wheelData, setWheelData] = React.useState({})
     const [winningNumber, setWinningNumber] = React.useState()
@@ -95,27 +96,27 @@ export default function Desk({orderAnswerArr}) {
     })
 
     const fetchAPI = async () => {
-        const response = await axios.get("http://localhost:8080/initialise")
-        console.log(response)
+        const language = speaksChinese ? "Chinese" : "Greek"
+        const response = await axios.get("http://localhost:8080/initialise", {params: {symbol: language}})
         setFetchedData(response)
     }
 
     React.useEffect(() => {
-        if (!fetchedOnce && useAPI) {
+        if (!fetchedOnce && useAPI && speaksChinese) {
             fetchedOnce = true;
             if (import.meta.hot) import.meta.hot.data.fetchedOnce = true;
             fetchAPI()
             console.log("called api")
         }
-    }, [])
+    }, [speaksChinese])
 
 
     React.useEffect(() => {
-        if (!currentlyPlaying) return;
-        if (!fetchedData) return;
+        if (!currentlyPlaying) return
+        if (!fetchedData) return
         if (!useAPI) return
-        if (appliedFetchedOnce) return;
-        setPotentialChars(fetchedData.data.dictionary);
+        if (appliedFetchedOnce) return
+        setPotentialChars(fetchedData.data.dictionary)
         setRules({
         inactive: fetchedData.data.rules.slice(4),
         active: fetchedData.data.rules.slice(0,4) ?? [],

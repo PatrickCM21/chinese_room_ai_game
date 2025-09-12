@@ -19,15 +19,16 @@ app.get("/", (req, res) => {
 })
 
 app.get("/initialise", async (req, res) => {
+    const symbol = req.query.symbol
     const system = `You are a JSON generator. Return ONLY JSON that matches the schema. 
-    - Use Simplified Chinese characters.
+    - Use ${symbol} characters.
     - Rules' order and answer must be syntactically valid short phrases/questions.
     - Only use characters that appear in Dictionary.
     - No extra keys, no comments.`;
 
     const user = `Provide me with a JSON object with two keys: "Dictionary" and "Rules".
-    - Dictionary: up to 100 entries, each with unique id and a single-character "character" (Simplified Chinese).
-    - Rules: up to 30 entries. Each has unique id, "order" (a question, ≤ 8 chars) and "answer" (≤ 8 chars).
+    - Dictionary: up to 50 entries, each with unique id and a single-character "character" (${symbol}).
+    - Rules: up to 20 entries. Each has unique id, "order" (a question, ≤ 8 chars) and "answer" (≤ 8 chars).
     - Every character used in any rule must exist in Dictionary.
     Return only JSON.`
     try {
@@ -50,7 +51,7 @@ app.get("/initialise", async (req, res) => {
                         dictionary: {
                             type: "array",
                             minItems: 1,
-                            maxItems: 100,
+                            maxItems: 50,
                             items: {
                             type: "object",
                             additionalProperties: false,
@@ -64,7 +65,7 @@ app.get("/initialise", async (req, res) => {
                         rules: {
                             type: "array",
                             minItems: 1,
-                            maxItems: 30,
+                            maxItems: 20,
                             items: {
                             type: "object",
                             additionalProperties: false,

@@ -3,9 +3,9 @@
     margin: 0;
     padding: 0;
     background: 
-        url("deskPerson.png") center 68% / 10vh auto no-repeat,
-        url("house.png") center 20% / 65vh auto no-repeat,
-        url("outside.jpeg") center/contain repeat-x;
+        url("/deskPerson.png") center 68% / 10vh auto no-repeat,
+        url("/house.png") center 20% / 65vh auto no-repeat,
+        url("/outside.jpeg") center/contain repeat-x;
 
 
     position: relative;

@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState } from 'react'
-import { TutorialContext } from './Context'
+import { TutorialContext, LevelContext } from './Context'
 import axios from "axios"
 import useSound from 'use-sound';
 
@@ -14,7 +14,7 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
     const [helpData, setHelpData] = useState('')
     const [helpDisabled, setHelpDisabled] = useState(false)
     const [playSwoosh] = useSound(swooshSound)
-    
+    const [speaksChinese, setSpeaksChinese] = useContext(LevelContext).speaksChinese
 
     useEffect(() => {
         if (actions === -1) {
@@ -55,6 +55,10 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
             setPosition({top: "30%", left: "10%", right: "auto", bottom: "auto"})
         } else if (actions === 6) {
             setPosition({top: "30%", left: "auto", right: "-10%", bottom: "auto"})
+        } else if (actions === 7) {
+            setSpeaksChinese(true)
+        } else if (actions === 8) {
+            setSpeaksChinese(false)
         }
     }, [actions])
 
