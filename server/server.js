@@ -15,7 +15,7 @@ app.use(cors(corsOptions))
 const openai = new OpenAI();
 
 app.get("/", async (req, res) => {
-    res.send("server is running.")
+    res.json({"data": "server is running"})
 })
 
 app.get("/initialise", async (req, res) => {
