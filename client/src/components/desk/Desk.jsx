@@ -35,7 +35,7 @@ const orderAnswerContainer = {
 }   
 
 // Used to toggle api
-const useAPI = false;
+const useAPI = true;
 
 let fetchedOnce = import.meta.hot?.data?.fetchedOnce ?? false;
 if (import.meta.hot) {
@@ -73,7 +73,6 @@ export default function Desk({orderAnswerArr}) {
         items: [
             {"id":"1","character":"恨"},
             {"id":"2","character":"我"},
-            {"id":"25","character":"中"},
             {"id":"3","character":"好"},
         ]
         },
@@ -85,11 +84,6 @@ export default function Desk({orderAnswerArr}) {
 
     const [rules, setRules] = React.useState({
         inactive: [
-            {
-                id: 2,
-                order: "中",
-                answer: "中"
-            }
         ],
         active: [
             {
@@ -126,6 +120,8 @@ export default function Desk({orderAnswerArr}) {
         inactive: fetchedData.data.rules.slice(4),
         active: fetchedData.data.rules.slice(0,4) ?? [],
         });
+        // starting order
+        generateNewOrder()
         setAppliedFetchedOnce(true);
     }, [currentlyPlaying, fetchedData, appliedFetchedOnce]);
 
@@ -159,7 +155,7 @@ export default function Desk({orderAnswerArr}) {
     const ruleBookImg = React.useRef(null)
 
 
-    const orderDelay = 2 * 1000; // 10 seconds
+    const orderDelay = 15 * 1000; // 15 seconds
 
     React.useEffect(() => {
         if (!currentlyPlaying) return
