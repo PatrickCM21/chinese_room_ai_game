@@ -57,7 +57,7 @@ export default function Desk({orderAnswerArr}) {
     const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useState(false);
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
     const [level, setLevel] = React.useContext(LevelContext).level
-    const [speaksChinese, setSpeaksChinese] = useContext(LevelContext).speaksChinese
+    const [speaksChinese, setSpeaksChinese] = React.useContext(LevelContext).speaksChinese
     const [wheelPresent, setWheelPresent] = React.useState(false)
     const [wheelData, setWheelData] = React.useState({})
     const [winningNumber, setWinningNumber] = React.useState()
