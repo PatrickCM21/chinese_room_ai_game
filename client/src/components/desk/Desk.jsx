@@ -58,6 +58,7 @@ export default function Desk({orderAnswerArr}) {
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
     const [level, setLevel] = React.useContext(LevelContext).level
     const [speaksChinese, setSpeaksChinese] = React.useContext(LevelContext).speaksChinese
+    const [startAPICall, setStartAPICall] = React.useContext(LevelContext).startAPICall
     const [wheelPresent, setWheelPresent] = React.useState(false)
     const [wheelData, setWheelData] = React.useState({})
     const [winningNumber, setWinningNumber] = React.useState()
@@ -96,13 +97,14 @@ export default function Desk({orderAnswerArr}) {
     })
 
     const fetchAPI = async () => {
+        const host = import.meta.env.VITE_HOST;
         const language = speaksChinese ? "Chinese" : "Greek"
-        const response = await axios.get("http://localhost:8080/initialise", {params: {symbol: language}})
+        const response = await axios.get(`${host}/initialise`, {params: {symbol: language}})
         setFetchedData(response)
     }
 
     React.useEffect(() => {
-        if (!fetchedOnce && useAPI && speaksChinese) {
+        if (!fetchedOnce && useAPI && startAPICall) {
             fetchedOnce = true;
             if (import.meta.hot) import.meta.hot.data.fetchedOnce = true;
             fetchAPI()
@@ -116,6 +118,7 @@ export default function Desk({orderAnswerArr}) {
         if (!fetchedData) return
         if (!useAPI) return
         if (appliedFetchedOnce) return
+        console.log('updated using API')
         setPotentialChars(fetchedData.data.dictionary)
         setRules({
         inactive: fetchedData.data.rules.slice(4),

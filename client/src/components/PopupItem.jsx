@@ -15,6 +15,7 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
     const [helpDisabled, setHelpDisabled] = useState(false)
     const [playSwoosh] = useSound(swooshSound)
     const [speaksChinese, setSpeaksChinese] = useContext(LevelContext).speaksChinese
+    const [startAPICall, setStartAPICall] = useContext(LevelContext).startAPICall
 
     useEffect(() => {
         if (actions === -1) {
@@ -57,15 +58,17 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
             setPosition({top: "30%", left: "auto", right: "-10%", bottom: "auto"})
         } else if (actions === 7) {
             setSpeaksChinese(true)
+            startAPICall(true)
         } else if (actions === 8) {
             setSpeaksChinese(false)
+            startAPICall(true)
         }
     }, [actions])
 
     let popupStyle
     let dataStyle
     let btnClass
-    if (actions !== undefined) {
+    if (actions !== undefined && actions < 7) {
         btnClass = "popup-btns-side"
         popupStyle = {
             position: "absolute",
@@ -86,9 +89,10 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
     }
 
     async function requestHelp(data) {
+        const host = import.meta.env.VITE_HOST;
         setHelpVisible(true)
         setHelpDisabled(true)
-        const response = await axios.post("http://localhost:8080/requesthelp", {data: data})
+        const response = await axios.post(`${host}/requesthelp`, {data: data})
         setHelpData(response.data)
     }
 
