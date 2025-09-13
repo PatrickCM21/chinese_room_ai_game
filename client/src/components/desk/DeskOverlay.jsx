@@ -377,10 +377,10 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
         if (question.answer === receivedResponse.answer) {
             playDing()
             updateLevel(xpGainedPerOrder)
-            orderAnswer[orderAnswerContainer.PAPERCONTAINER].items = []
         } else {
             playWrong()
         }
+        orderAnswer[orderAnswerContainer.PAPERCONTAINER].items = []
     }
 
     function updateLevel(added_xp) {
