@@ -16,6 +16,12 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
     const [playSwoosh] = useSound(swooshSound)
     const [speaksChinese, setSpeaksChinese] = useContext(LevelContext).speaksChinese
     const [startAPICall, setStartAPICall] = useContext(LevelContext).startAPICall
+    const [appliedFetchedOnce, setAppliedFetchedOnce] = useContext(LevelContext).fetched;
+    const [key, setKey] = useState(0)
+
+    useEffect(() => {
+        setKey(prev => prev + 1);
+    }, [appliedFetchedOnce])
 
     useEffect(() => {
         if (actions === -1) {
@@ -45,15 +51,15 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
             })
             setPosition({top: "30%", left: "0%", right: "auto", bottom: "auto"})
         } else if (actions === 1) {
-            setPosition({top: "30%", left: "auto", right: "0", bottom: "auto"})
+            setPosition({top: "30%", left: "auto", right: "-10%", bottom: "auto"})
         } else if (actions === 2) {
-            setPosition({top: "30%", left: "auto", right: "15%", bottom: "auto"})
+            setPosition({top: "30%", left: "auto", right: "5%", bottom: "auto"})
         } else if (actions === 3) {
-            setPosition({top: "30%", left: "auto", right: "40%", bottom: "auto"})
-        } else if (actions === 4) {
             setPosition({top: "30%", left: "auto", right: "30%", bottom: "auto"})
+        } else if (actions === 4) {
+            setPosition({top: "30%", left: "auto", right: "25%", bottom: "auto"})
         } else if (actions === 5) {
-            setPosition({top: "30%", left: "10%", right: "auto", bottom: "auto"})
+            setPosition({top: "30%", left: "-20%", right: "auto", bottom: "auto"})
         } else if (actions === 6) {
             setPosition({top: "30%", left: "auto", right: "-10%", bottom: "auto"})
         } else if (actions === 7) {
@@ -104,18 +110,18 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
     }
 
     const buttonElements = buttons.map(btn => {
-        return <button key={btn.id} onClick={() => updateDialogue(btn.goto)}>{btn.text}</button>
+        return <button key={btn.id}  onClick={() => updateDialogue(btn.goto)}>{btn.text}</button>
     })
 
     return (
         <div className="popup" key={'dialogue-box'} style={popupStyle}>
-            <section className="popup-data" style={dataStyle}>
+            <section className="popup-data" style={dataStyle} key={key}>
                 <div className="popup-text">
                     {text}
 
                 </div>
                 <div className={`popup-btns ${btnClass}`}>
-                    {buttonElements}
+                    {(appliedFetchedOnce || buttons[0].goto != null ) ? buttonElements : <div>Please wait for loading to complete...</div>}
                 </div>
                 {help &&
                 <button className="popup-help" onClick={() => requestHelp(text)} disabled={helpDisabled}>

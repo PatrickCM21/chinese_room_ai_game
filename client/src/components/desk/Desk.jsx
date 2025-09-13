@@ -8,7 +8,6 @@ import { Wheel } from 'react-custom-roulette-r19'
 
 import useSound from 'use-sound';
 import spinSound from '../../assets/sounds/spin.mp3'
-import dingSound from '../../assets/sounds/ding.wav'
 import paperRuffleSound from '../../assets/sounds/paperRuffle.wav'
 import bookOpenSound from '../../assets/sounds/bookOpen.wav'
 import bookCloseSound from '../../assets/sounds/bookClose.wav'
@@ -48,7 +47,6 @@ if (import.meta.hot) {
 
 export default function Desk({orderAnswerArr}) {
     const [playSpin] = useSound(spinSound)
-    const [playDing] = useSound(dingSound)
     const [playRuffle] = useSound(paperRuffleSound)
     const [playBookOpen] = useSound(bookOpenSound)
     const [playBookClose] = useSound(bookCloseSound)
@@ -56,7 +54,7 @@ export default function Desk({orderAnswerArr}) {
     const [playTile] = useSound(tileSound)
 
     const [fetchedData, setFetchedData] = React.useState(null)
-    const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useState(false);
+    const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useContext(LevelContext).fetched;
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
     const [level, setLevel] = React.useContext(LevelContext).level
     const [speaksChinese, setSpeaksChinese] = React.useContext(LevelContext).speaksChinese
@@ -100,7 +98,7 @@ export default function Desk({orderAnswerArr}) {
 
     const fetchAPI = async () => {
         const host = import.meta.env.VITE_HOST;
-        const language = speaksChinese ? "Chinese" : "Greek"
+        const language = speaksChinese ? "Greek" : "Chinese"
         const response = await axios.get(`${host}/initialise`, {params: {symbol: language}})
         setFetchedData(response)
         console.log("received data")
@@ -116,42 +114,84 @@ export default function Desk({orderAnswerArr}) {
         }
     }, [startAPICall])
 
+    function shuffle(array) {
+        let currentIndex = array.length;
+    
+        // While there remain elements to shuffle...
+        while (currentIndex != 0) {
+            // Pick a remaining element...
+            let randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+    
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+        }
+    }
 
     React.useEffect(() => {
-        if (!currentlyPlaying) return
         if (!fetchedData) return
         if (!useAPI) return
         if (appliedFetchedOnce) return
         console.log('updated using API')
-        setPotentialChars(fetchedData.data.dictionary)
+        const seen = new Set();
+        setCharacters(prev => {
+            return prev.map(c => {
+                if (c.id === 'paper') return c
+                const shuffledRules = [...fetchedData.data.rules]
+                shuffle(shuffledRules)
+                const items = shuffledRules.map(rule => {
+                    const shuffledAnswer = rule.answer.split('')
+                    shuffle(shuffledAnswer)
+                    return shuffledAnswer.filter(char => {
+                        if (!seen.has(char)) {
+                            seen.add(char)
+                            return true
+                        } else return false         
+                    })
+                })
+                return {
+                    ...c,
+                    items: items.flat().map((char, index) => {return {id: index, character: char}})
+                }
+        })
+        })
+        
         setRules({
         inactive: fetchedData.data.rules.slice(4),
         active: fetchedData.data.rules.slice(0,4) ?? [],
         });
+        setPotentialChars(fetchedData.data.dictionary)
         // starting order
-        generateNewOrder()
         setAppliedFetchedOnce(true);
-    }, [currentlyPlaying, fetchedData, appliedFetchedOnce]);
+    }, [fetchedData, appliedFetchedOnce]);
 
+    React.useEffect(() => {
+        if (appliedFetchedOnce) {
+            generateNewOrder()
 
+        }
+    }, [currentlyPlaying])
 
     const generateNewOrder = React.useCallback(() => {
         if (!rules.active?.length) return;
-        playSwoosh()
         const randRule = Math.floor(Math.random() * rules.active.length);
         const newOrder = {
         id: newId(),
         text: rules.active[randRule].order,
         type: 'orders',
         };
-        setOrderAnswer(prev =>
-        prev[orderAnswerContainer.ORDER].items.length >= 5
-            ? prev
-            : prev.map(c =>
+        setOrderAnswer(prev => {
+            if (prev[orderAnswerContainer.ORDER].items.length >= 5) {
+                return prev
+            } else {
+                playSwoosh()
+                return prev.map(c =>
                 c.id === 'orders'
                 ? { ...c, items: [...c.items, newOrder] }
-                : c
-            )
+                : c)
+            }
+        }
         );
     }, [rules.active, setOrderAnswer]);
 
@@ -401,6 +441,8 @@ export default function Desk({orderAnswerArr}) {
         const prevContainer = findCharacterContainerId(active.id);
         const newContainer = findCharacterContainerId(over.id)
         if (!prevContainer || !newContainer) return;
+        
+        playTile()
 
         if (prevContainer === newContainer && active.id !== over.id) {
             const containerIndex = characters.findIndex(c => c.id === prevContainer)
@@ -409,7 +451,6 @@ export default function Desk({orderAnswerArr}) {
                 setActiveId(null)
                 return
             }
-            playTile()
             const container = characters[containerIndex]
             const activeIndex = container.items.findIndex(item => item.id === active.id)
             const overIndex = container.items.findIndex(item => item.id === over.id)

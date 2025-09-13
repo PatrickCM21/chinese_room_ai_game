@@ -16,13 +16,16 @@ import paperPlaceSound from '../../assets/sounds/paperPlace.wav'
 import staplerOpenSound from '../../assets/sounds/staplerOpen.wav'
 import stapleSound from '../../assets/sounds/stapler.wav'
 import binSound from '../../assets/sounds/trash.mp3'
-
+import dingSound from '../../assets/sounds/ding.wav'
+import wrongSound from '../../assets/sounds/wrong.mp3'
 
 export default function DeskOverlay({orderAnswerArr, rulesList}) {
     const [playStaple] = useSound(stapleSound)
     const [playOpenStapler] = useSound(staplerOpenSound)
     const [playPaperPlace] = useSound(paperPlaceSound)
     const [playBin] = useSound(binSound)
+    const [playWrong] = useSound(wrongSound)
+    const [playDing] = useSound(dingSound)
 
     const orderAnswerContainer = {
     ORDER: 0,
@@ -138,7 +141,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     function PaperOverlay({ children, className }) {
         return (
             <div className={className}>
-                {children.type === 'orders' ? <span>Please Respond:</span>: null}
+                {children.type === 'orders' ? <span>Please Respond To:</span>: null}
                 {children.type !== 'responses' ? children.text: null}
             </div>
         )
@@ -188,8 +191,8 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
         const activeContainerId = findPaperContainerId(activeId)
         const activeContainerIndex = orderAnswer.findIndex(c => c.id === activeContainerId)
         const activeObj = orderAnswer[activeContainerIndex].items.find(item => item.id === activeId)
-
-        if (over?.id === 'responses' && activeObj.type != 'responses') return;
+        
+        if (over?.id === 'paper-container' && activeObj.type != 'responses') return;
 
         if (!over) {
             if (hoverDropped) {
@@ -372,8 +375,11 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
         const xpGainedPerOrder = 20;
 
         if (question.answer === receivedResponse.answer) {
+            playDing()
             updateLevel(xpGainedPerOrder)
             orderAnswer[orderAnswerContainer.PAPERCONTAINER].items = []
+        } else {
+            playWrong()
         }
     }
 

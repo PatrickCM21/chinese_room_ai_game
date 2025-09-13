@@ -19,17 +19,17 @@ app.get("/", (req, res) => {
 })
 
 app.get("/initialise", async (req, res) => {
+    console.log("received initialise req")
     const symbol = req.query.symbol
     const system = `You are a JSON generator. Return ONLY JSON that matches the schema. 
     - Use ${symbol} characters.
     - Rules' order and answer must be syntactically valid short phrases/questions.
-    - Only use characters that appear in Dictionary.
+    - Rules do not need to use dictionary characters
     - No extra keys, no comments.`;
 
     const user = `Provide me with a JSON object with two keys: "Dictionary" and "Rules".
-    - Dictionary: up to 50 entries, each with unique id and a single-character "character" (${symbol}).
-    - Rules: up to 20 entries. Each has unique id, "order" (a question, ≤ 8 chars) and "answer" (≤ 8 chars).
-    - Every character used in any rule must exist in Dictionary.
+    - Dictionary: 16 entries, each with unique id number and a single-character "character" (${symbol}).
+    - Rules: 16 entries. Each has unique id number, "order" (a question, between 3 and 8 chars) and "answer" (between 3 and 8 chars). ${symbol === 'Chinese' ? "Do not use 你好吗" : ""}
     Return only JSON.`
     try {
         const response = await openai.responses.create({
@@ -50,8 +50,8 @@ app.get("/initialise", async (req, res) => {
                         properties: {
                         dictionary: {
                             type: "array",
-                            minItems: 1,
-                            maxItems: 50,
+                            minItems: 16,
+                            maxItems: 16,
                             items: {
                             type: "object",
                             additionalProperties: false,
@@ -64,16 +64,16 @@ app.get("/initialise", async (req, res) => {
                         },
                         rules: {
                             type: "array",
-                            minItems: 1,
-                            maxItems: 20,
+                            minItems: 16,
+                            maxItems: 16,
                             items: {
                             type: "object",
                             additionalProperties: false,
                             required: ["id", "order", "answer"],
                             properties: {
                                 id: { type: "string", minLength: 1 },
-                                order: { type: "string", minLength: 1, maxLength: 8 },
-                                answer: { type: "string", minLength: 1, maxLength: 8 }
+                                order: { type: "string", minLength: 3, maxLength: 8 },
+                                answer: { type: "string", minLength: 3, maxLength: 8 }
                             }
                             }
                         }
@@ -83,7 +83,7 @@ app.get("/initialise", async (req, res) => {
                 }
         });
         const data = JSON.parse(response.output_text)
-    
+        console.log("sent data")
         res.json(data)
     } catch (e) {
         console.log(e)

@@ -27,6 +27,9 @@ function App() {
 
   const [startAPICall, setStartAPICall] = useState(false)
 
+  const [appliedFetchedOnce, setAppliedFetchedOnce] = useState(false);
+
+
   const [orderAnswer, setOrderAnswer] = useState([
     {
     id: "orders",
@@ -56,7 +59,7 @@ function App() {
 
   return (
     <>
-      <LevelContext value={{level: [level, setLevel], dialogue: [dialogue, setDialogue], currentlyPlaying: [currentlyPlaying, setCurrentlyPlaying], speaksChinese: [speaksChinese, setSpeaksChinese], startAPICall: [startAPICall, setStartAPICall]}}>
+      <LevelContext value={{level: [level, setLevel], dialogue: [dialogue, setDialogue], currentlyPlaying: [currentlyPlaying, setCurrentlyPlaying], speaksChinese: [speaksChinese, setSpeaksChinese], startAPICall: [startAPICall, setStartAPICall], fetched: [appliedFetchedOnce, setAppliedFetchedOnce]}}>
         <Popups orderAnswerArr={[orderAnswer, setOrderAnswer]}/>
         <ChineseRoom />
         <Desk orderAnswerArr={[orderAnswer, setOrderAnswer]}/>
