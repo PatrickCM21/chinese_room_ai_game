@@ -123,7 +123,7 @@
                 "buttons": [
                     {
                         "id": 1,
-                        "text": "Ok, that makes sense.",
+                        "text": "Ok great, done.",
                         "goto": 11
                     }
                 ],

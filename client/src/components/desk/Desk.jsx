@@ -54,6 +54,7 @@ export default function Desk({orderAnswerArr}) {
     const [playTile] = useSound(tileSound)
 
     const [fetchedData, setFetchedData] = React.useState(null)
+    const [startUpdate, setStartUpdate] = React.useContext(LevelContext).startUpdate;
     const [appliedFetchedOnce, setAppliedFetchedOnce] = React.useContext(LevelContext).fetched;
     const [currentlyPlaying, setCurrentlyPlaying] = React.useContext(LevelContext).currentlyPlaying
     const [level, setLevel] = React.useContext(LevelContext).level
@@ -132,7 +133,7 @@ export default function Desk({orderAnswerArr}) {
     React.useEffect(() => {
         if (!fetchedData) return
         if (!useAPI) return
-        if (!currentlyPlaying) return
+        if (!startUpdate) return
         if (appliedFetchedOnce) return
         console.log('updated using API')
         const seen = new Set();
@@ -165,7 +166,7 @@ export default function Desk({orderAnswerArr}) {
         });
         // starting order
         setAppliedFetchedOnce(true);
-    }, [currentlyPlaying, fetchedData, appliedFetchedOnce]);
+    }, [startUpdate, fetchedData, appliedFetchedOnce]);
 
     React.useEffect(() => {
         if (appliedFetchedOnce) {

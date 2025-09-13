@@ -17,6 +17,7 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
     const [speaksChinese, setSpeaksChinese] = useContext(LevelContext).speaksChinese
     const [startAPICall, setStartAPICall] = useContext(LevelContext).startAPICall
     const [appliedFetchedOnce, setAppliedFetchedOnce] = useContext(LevelContext).fetched;
+    const [startUpdate, setStartUpdate] = useContext(LevelContext).startUpdate;
     const [key, setKey] = useState(0)
 
     useEffect(() => {
@@ -62,6 +63,7 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
             setPosition({top: "30%", left: "-20%", right: "auto", bottom: "auto"})
         } else if (actions === 6) {
             setPosition({top: "30%", left: "auto", right: "-10%", bottom: "auto"})
+            setStartUpdate(true)
         } else if (actions === 7) {
             setSpeaksChinese(true)
             setStartAPICall(true)
