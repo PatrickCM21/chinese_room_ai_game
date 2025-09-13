@@ -16,7 +16,7 @@ function App() {
     level: 0,
     xp: 0,
     prestige: 0,
-    xpRequired: 80
+    xpRequired: 90
   })
 
   const [dialogue, setDialogue] = useState(0)

@@ -24,7 +24,7 @@ export default function ChineseRoom() {
     }, [xp])
 
     function getXpRequired(Level) {
-        return 80
+        return 90
     }
 
     function executeLevelUp() {

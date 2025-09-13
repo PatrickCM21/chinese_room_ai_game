@@ -2,7 +2,7 @@
     {
         "popups": [
             {
-                "text": "Welcome to the Chinese Room! \n First things first, please let me know if you can actually read Chinese, as if so it defeats the point of the analogy this experiment relies on, in which case the symbols will be swapped to greek ones. (You don't need to understand what this means yet)",
+                "text": "Welcome to the Chinese Room! Please let me know if you can already read Chinese. If you can, it makes this game ineffective! If so, the symbols will be swapped to the Greek alphabet. Don't worry if this doesn't make sense just yet!",
                 "buttons": [
                     {   
                         "id": 1,
@@ -17,7 +17,7 @@
                 ]
             },
             {
-                "text": "This is a game is based on 'The Chinese Room Argument'. It's a philosophical argument by John Searle that aims to conclusively decide upon whether modern electrical computers can ever 'understand' the things they've been programmed to do.",
+                "text": "This is a game is based on 'The Chinese Room Argument'. It's a philosophical thought experiment by John Searle that aims to see if modern computers can ever 'understand' the things they've been programmed to do/",
                 "buttons": [
                     {
                         "id": 1,
@@ -32,7 +32,7 @@
                 ]
             },
             {
-                "text": "Your job here is the act as the worker in the Chinese Room. Your job is to receive a message written in Chinese from the outside, then use the dictionary and rulebook provided to create the right response, and send that back outside. Make sense?",
+                "text": "Your job here is to act as the worker in the Chinese Room. You will receive a message written in Chinese from the outside, and your job is to use the dictionary and rulebook provided to create the right response, and sent that back outside. Make sense?",
                 "buttons": [
                     {
                         "id": 1,

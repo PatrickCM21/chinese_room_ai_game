@@ -372,7 +372,7 @@ export default function DeskOverlay({orderAnswerArr, rulesList}) {
     function processResponse() {
         const receivedResponse = orderAnswer[orderAnswerContainer.PAPERCONTAINER].items[0];
         const question = rules.active.find((rule) => rule.order === receivedResponse.order)
-        const xpGainedPerOrder = 20;
+        const xpGainedPerOrder = 30;
 
         if (question.answer === receivedResponse.answer) {
             playDing()
