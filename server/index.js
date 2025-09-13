@@ -25,7 +25,7 @@ app.get("/initialise", async (req, res) => {
     - Use ${symbol} characters.
     - Rules' order and answer must be syntactically valid short phrases/questions.
     - Rules do not need to use dictionary characters
-    - No extra keys, no comments.`;
+    - No extra keys, no comments, no punctuation.`;
 
     const user = `Provide me with a JSON object with two keys: "Dictionary" and "Rules".
     - Dictionary: 16 entries, each with unique id number and a single-character "character" (${symbol}).

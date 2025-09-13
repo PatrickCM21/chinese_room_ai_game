@@ -12,7 +12,7 @@ export default function Order({ children, id }) {
     }, [])
 
     const windowHeight = useWindowHeight()
-    const yStart = (Math.random() * (windowHeight / 2) + windowHeight / 2) - 50;
+    const yStart = (Math.random() * (windowHeight / 2) + windowHeight / 2) - 75;
 
     return (
         <DraggableAnywhere 
