@@ -52,7 +52,7 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
             })
             setPosition({top: "30%", left: "0%", right: "auto", bottom: "auto"})
         } else if (actions === 1) {
-            setPosition({top: "30%", left: "auto", right: "-10%", bottom: "auto"})
+            setPosition({top: "30%", left: "auto", right: "0", bottom: "auto"})
         } else if (actions === 2) {
             setPosition({top: "30%", left: "auto", right: "5%", bottom: "auto"})
         } else if (actions === 3) {
@@ -62,7 +62,7 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
         } else if (actions === 5) {
             setPosition({top: "30%", left: "-20%", right: "auto", bottom: "auto"})
         } else if (actions === 6) {
-            setPosition({top: "30%", left: "auto", right: "-10%", bottom: "auto"})
+            setPosition({top: "30%", left: "auto", right: "0", bottom: "auto"})
             setStartUpdate(true)
         } else if (actions === 7) {
             setSpeaksChinese(true)
