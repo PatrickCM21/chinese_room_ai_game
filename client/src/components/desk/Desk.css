@@ -235,6 +235,7 @@
     position:fixed; 
 
     padding:6px;
+    z-index: 101;
     
     width: 50vh; 
     height: 220px; 
@@ -314,7 +315,7 @@
     background-color: aliceblue; 
     border: 1px solid black; 
     position:fixed; 
-
+    z-index: 101;
     padding:6px;
     
     width: 50vh; 

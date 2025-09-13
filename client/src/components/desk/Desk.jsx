@@ -132,9 +132,11 @@ export default function Desk({orderAnswerArr}) {
     React.useEffect(() => {
         if (!fetchedData) return
         if (!useAPI) return
+        if (!currentlyPlaying) return
         if (appliedFetchedOnce) return
         console.log('updated using API')
         const seen = new Set();
+        setPotentialChars(fetchedData.data.dictionary)
         setCharacters(prev => {
             return prev.map(c => {
                 if (c.id === 'paper') return c
@@ -161,10 +163,9 @@ export default function Desk({orderAnswerArr}) {
         inactive: fetchedData.data.rules.slice(4),
         active: fetchedData.data.rules.slice(0,4) ?? [],
         });
-        setPotentialChars(fetchedData.data.dictionary)
         // starting order
         setAppliedFetchedOnce(true);
-    }, [fetchedData, appliedFetchedOnce]);
+    }, [currentlyPlaying, fetchedData, appliedFetchedOnce]);
 
     React.useEffect(() => {
         if (appliedFetchedOnce) {

@@ -2,7 +2,7 @@
     {
         "popups": [
             {
-                "text": "Welcome to the Chinese Room! \n First things first, please let me know if you can actually read Chinese, as if so it defeats the point of the analogy this experiment relies on, in which case the symbols will be swapped to greek ones. (You don't need to understand what this means yet.",
+                "text": "Welcome to the Chinese Room! \n First things first, please let me know if you can actually read Chinese, as if so it defeats the point of the analogy this experiment relies on, in which case the symbols will be swapped to greek ones. (You don't need to understand what this means yet)",
                 "buttons": [
                     {   
                         "id": 1,
@@ -64,7 +64,7 @@
                 "actions": 0
             },
             {
-                "text": "Then, you can open your rulebook to find out how to respond. Click the rules book below to see.",
+                "text": "Then, you can open your rulebook to find out how to respond. Click the rules book below to see. You can drag it around.",
                 "buttons": [
                     {
                         "id": 1,
@@ -75,7 +75,7 @@
                 "actions": 1
             },
             {
-                "text": "To make your response, firstly, click the dictionary below to access your available characters.",
+                "text": "To make your response, firstly, click the dictionary below to access your available characters. You can drag this around too!",
                 "buttons": [
                     {
                         "id": 1,
