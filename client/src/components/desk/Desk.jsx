@@ -205,7 +205,7 @@ export default function Desk({orderAnswerArr}) {
     const ruleBookImg = React.useRef(null)
 
 
-    const orderDelay = 15 * 1000; // 15 seconds
+    const orderDelay = 20 * 1000; // 15 seconds
 
     React.useEffect(() => {
         if (!currentlyPlaying) return
