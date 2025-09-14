@@ -24,12 +24,10 @@ app.get("/initialise", async (req, res) => {
     const system = `You are a JSON generator. Return ONLY JSON that matches the schema. 
     - Use ${symbol} characters.
     - Rules' order and answer must be syntactically valid short phrases/questions.
-    - Rules do not need to use dictionary characters
     - No extra keys, no comments, no punctuation.`;
 
     const user = `Provide me with a JSON object with two keys: "Dictionary" and "Rules".
-    - Dictionary: 16 entries, each with unique id number and a single-character "character" (${symbol}).
-    - Rules: 16 entries. Each has unique id number, "order" (a question, between 3 and 8 chars) and "answer" (between 3 and 4 chars). ${symbol === 'Chinese' ? "Do not use 你好吗" : ""}
+    - Rules: 12 entries. Each has unique id number, "order" (a question, between 3 and 8 chars) and "answer" (between 3 and 4 chars). ${symbol === 'Chinese' ? "Do not use 你好吗" : ""}
     Return only JSON.`
     try {
         const response = await openai.responses.create({
@@ -46,26 +44,12 @@ app.get("/initialise", async (req, res) => {
                     schema: {
                         type: "object",
                         additionalProperties: false,
-                        required: ["dictionary", "rules"],
+                        required: ["rules"],
                         properties: {
-                        dictionary: {
-                            type: "array",
-                            minItems: 16,
-                            maxItems: 16,
-                            items: {
-                            type: "object",
-                            additionalProperties: false,
-                            required: ["id", "character"],
-                            properties: {
-                                id: { type: "string", minLength: 1 },
-                                character: { type: "string", minLength: 1, maxLength: 1 }
-                            }
-                            }
-                        },
                         rules: {
                             type: "array",
-                            minItems: 16,
-                            maxItems: 16,
+                            minItems: 12,
+                            maxItems: 12,
                             items: {
                             type: "object",
                             additionalProperties: false,

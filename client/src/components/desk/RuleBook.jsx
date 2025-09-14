@@ -1,5 +1,5 @@
 import DraggableAnywhere from "../base_dnd/DraggableAnywhere"
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { useWindowHeight, useWindowWidth } from '@react-hook/window-size'
 import { LevelContext } from "../Context"
 
@@ -18,6 +18,10 @@ export default function RuleBook({ref, rules, updateRule=null}) {
     const firstIndex = lastIndex - rulesPerPage;
 
     const currRules = rules.active.slice(firstIndex, lastIndex)
+
+    useEffect(() => {
+        setCurrPage(1)
+    }, [rules])
 
     const rulesElements = currRules.map(rule => {
         if (level.level < 2) {

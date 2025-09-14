@@ -67,11 +67,6 @@ export default function Desk({orderAnswerArr}) {
     const [winningNumber, setWinningNumber] = React.useState()
     const consideredRule = React.useRef()
     const [mustSpin, setMustSpin] = React.useState(false)
-    const [potentialChars, setPotentialChars] = React.useState([{"id":"1","character":"恨"},
-            {"id":"2","character":"我"},
-            {"id":"25","character":"中"},
-            {"id":"3","character":"好"}])
-
     const [orderAnswer, setOrderAnswer] = orderAnswerArr
     const [characters, setCharacters] = React.useState([{
         id: "dictionary",
@@ -139,7 +134,6 @@ export default function Desk({orderAnswerArr}) {
         if (appliedFetchedOnce) return
         console.log('updated using API')
         const seen = new Set();
-        setPotentialChars(fetchedData.data.dictionary)
         setCharacters(prev => {
             return prev.map(c => {
                 if (c.id === 'paper') return c
@@ -171,7 +165,7 @@ export default function Desk({orderAnswerArr}) {
     }, [startUpdate, fetchedData, appliedFetchedOnce]);
 
     React.useEffect(() => {
-        if (appliedFetchedOnce) {
+        if (appliedFetchedOnce && currentlyPlaying === true) {
             generateNewOrder()
 
         }
@@ -244,8 +238,8 @@ export default function Desk({orderAnswerArr}) {
         for (let i = 0; i < 10; i++) {
             let prizeChars = [];
             for (let j = 0; j < 3; j++) {
-                const randInd = Math.floor(Math.random() * potentialChars.length)
-                prizeChars.push(potentialChars[randInd].character)
+                const randInd = Math.floor(Math.random() * characters[characterContainer.DICTIONARY].items.length)
+                prizeChars.push(characters[characterContainer.DICTIONARY].items[randInd].character)
             }
             const color = i % 2 === 0 ? 'green' : 'white';
             data.push({ option: prizeChars.join(''), style: { backgroundColor: color, textColor: 'black' } })
