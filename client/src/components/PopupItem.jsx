@@ -124,7 +124,7 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
 
                 </div>
                 <div className={`popup-btns ${btnClass}`}>
-                    {(appliedFetchedOnce || buttons[0].goto != null ) ? buttonElements : <div>Please wait for loading to complete...</div>}
+                    {(appliedFetchedOnce || buttons[0].goto != null) ? buttonElements : <div>Please wait for loading to complete...</div>}
                 </div>
                 {help &&
                 <button className="popup-help" onClick={() => requestHelp(text)} disabled={helpDisabled}>

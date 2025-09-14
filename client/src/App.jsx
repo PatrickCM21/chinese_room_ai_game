@@ -13,7 +13,7 @@ import './components/desk/Desk.css'
 function App() {
 
   const [level, setLevel] = useState({
-    level: 0,
+    level: 1,
     xp: 0,
     prestige: 0,
     xpRequired: 90

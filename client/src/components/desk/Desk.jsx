@@ -13,6 +13,7 @@ import bookOpenSound from '../../assets/sounds/bookOpen.wav'
 import bookCloseSound from '../../assets/sounds/bookClose.wav'
 import swooshSound from '../../assets/sounds/swoosh.wav'
 import tileSound from '../../assets/sounds/tile.wav'
+import hornSound from '../../assets/sounds/horn.mp3'
 
 import DictionaryUI from './DictionaryUI.jsx'
 import PaperDroppable from './PaperDroppable.jsx';
@@ -52,6 +53,7 @@ export default function Desk({orderAnswerArr}) {
     const [playBookClose] = useSound(bookCloseSound)
     const [playSwoosh] = useSound(swooshSound)
     const [playTile] = useSound(tileSound)
+    const [playHorn] = useSound(hornSound)
 
     const [fetchedData, setFetchedData] = React.useState(null)
     const [startUpdate, setStartUpdate] = React.useContext(LevelContext).startUpdate;
@@ -90,7 +92,7 @@ export default function Desk({orderAnswerArr}) {
         ],
         active: [
             {
-                id: 1,
+                id: 6,
                 order: "你好吗",
                 answer: "我恨好"
             },
@@ -184,7 +186,7 @@ export default function Desk({orderAnswerArr}) {
         type: 'orders',
         };
         setOrderAnswer(prev => {
-            if (prev[orderAnswerContainer.ORDER].items.length >= 5) {
+            if (prev[orderAnswerContainer.ORDER].items.length >= 3) {
                 return prev
             } else {
                 playSwoosh()
@@ -214,13 +216,21 @@ export default function Desk({orderAnswerArr}) {
     }, [currentlyPlaying, generateNewOrder])
 
     React.useEffect(() => {
+        console.log("process level up")
         if (level.level === 0) return;
-        setRules(prev => {
+        if (level.level < 2) {
+            setRules(prev => {
             const newRules = prev.inactive.splice(0,4)
             prev.active.push(...newRules)
             return prev
         })        
+        }
         if (level.level >= 2) {
+            setRules(prev => {
+                const newRules = prev.inactive.splice(0,4)
+                prev.active = [...newRules]
+            return prev
+            })
             setRules(prev => {
                 return {
                     ...prev,
@@ -257,7 +267,7 @@ export default function Desk({orderAnswerArr}) {
     }
 
     function finishSpinning() { 
-        playDing()
+        playHorn()
         setTimeout(() => {
             setMustSpin(false)
             setWheelPresent(false)

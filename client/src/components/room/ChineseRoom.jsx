@@ -10,22 +10,17 @@ export default function ChineseRoom() {
     
     const levelProgress = (xp / xpRequired) * 100;
 
-
-
     const levelProgressStyle = {
         width: `${levelProgress}%`,
         height: '100%',
     }
 
     useEffect(() => {
-        if (xp >= getXpRequired(level)) {
+        if (xp >= xpRequired) {
             executeLevelUp()
         }
     }, [xp])
 
-    function getXpRequired(Level) {
-        return 90
-    }
 
     function executeLevelUp() {
         setLevel(prev => {
@@ -33,7 +28,6 @@ export default function ChineseRoom() {
                 ...prev,
                 level: prev.level + 1,
                 xp: prev.xp - prev.xpRequired,
-                xpRequired: getXpRequired(prev.level + 1)
             }
         })
         setDialogue(prev => prev + 1)
