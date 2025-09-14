@@ -63,13 +63,14 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
             setPosition({top: "30%", left: "0", right: "auto", bottom: "auto"})
         } else if (actions === 6) {
             setPosition({top: "30%", left: "auto", right: "0", bottom: "auto"})
-            setStartUpdate(true)
         } else if (actions === 7) {
             setSpeaksChinese(true)
             setStartAPICall(true)
         } else if (actions === 8) {
             setSpeaksChinese(false)
             setStartAPICall(true)
+        } else if (actions === 9) {
+            setStartUpdate(true)
         }
     }, [actions])
 

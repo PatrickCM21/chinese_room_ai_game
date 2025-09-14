@@ -17,7 +17,7 @@
                 ]
             },
             {
-                "text": "This is a game is based on 'The Chinese Room Argument'. It's a philosophical thought experiment by John Searle that aims to see if modern computers can ever 'understand' the things they've been programmed to do/",
+                "text": "This is a game is based on 'The Chinese Room Argument'. It's a philosophical thought experiment by John Searle that aims to see if modern computers can ever 'understand' the things they've been programmed to do.",
                 "buttons": [
                     {
                         "id": 1,
@@ -119,7 +119,7 @@
                 "actions": 5
             },
             {
-                "text": "Now, the final step is to drag it over to the right side, a menu will appear where you can either bin it or finish the job.",
+                "text": "Now, the final step is to drag it over to the right side, a menu will appear where you can either bin it or finish the job. Don't continue until this is done!",
                 "buttons": [
                     {
                         "id": 1,
@@ -142,7 +142,8 @@
                         "text": "I better be getting paid for this",
                         "goto": null
                     }
-                ]
+                ],
+                "actions": 9
             },
             {
                 "text": "谢谢! Now, continuing to the experience...",
