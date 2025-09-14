@@ -163,8 +163,8 @@ export default function Desk({orderAnswerArr}) {
         })
         
         setRules({
-        inactive: fetchedData.data.rules.slice(4),
-        active: fetchedData.data.rules.slice(0,4) ?? [],
+            inactive: fetchedData.data.rules.slice(4),
+            active: fetchedData.data.rules.slice(0,4),
         });
         // starting order
         setAppliedFetchedOnce(true);
@@ -224,7 +224,7 @@ export default function Desk({orderAnswerArr}) {
             const rest = prev.inactive.slice(count)
             if (level.level < 2) {
                 return {
-                    active: [...prev.active, take],
+                    active: [...prev.active, ...take],
                     inactive: rest
                 }
             } else if (level.level >= 2) {
@@ -240,7 +240,6 @@ export default function Desk({orderAnswerArr}) {
     }, [level.level])
 
     function updateRule(order) {
-        
         let data = [];
         for (let i = 0; i < 10; i++) {
             let prizeChars = [];

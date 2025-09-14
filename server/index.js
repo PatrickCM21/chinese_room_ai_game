@@ -29,7 +29,7 @@ app.get("/initialise", async (req, res) => {
 
     const user = `Provide me with a JSON object with two keys: "Dictionary" and "Rules".
     - Dictionary: 16 entries, each with unique id number and a single-character "character" (${symbol}).
-    - Rules: 16 entries. Each has unique id number, "order" (a question, between 3 and 8 chars) and "answer" (between 3 and 8 chars). ${symbol === 'Chinese' ? "Do not use 你好吗" : ""}
+    - Rules: 16 entries. Each has unique id number, "order" (a question, between 3 and 8 chars) and "answer" (between 3 and 4 chars). ${symbol === 'Chinese' ? "Do not use 你好吗" : ""}
     Return only JSON.`
     try {
         const response = await openai.responses.create({
@@ -73,7 +73,7 @@ app.get("/initialise", async (req, res) => {
                             properties: {
                                 id: { type: "string", minLength: 1 },
                                 order: { type: "string", minLength: 3, maxLength: 8 },
-                                answer: { type: "string", minLength: 3, maxLength: 8 }
+                                answer: { type: "string", minLength: 3, maxLength: 4 }
                             }
                             }
                         }
@@ -117,4 +117,6 @@ app.post("/requesthelp", async (req, res) => {
     }
 })
 
-export default app
+app.listen(8080, () => {
+    console.log(`Server running on port 3000`);
+});
