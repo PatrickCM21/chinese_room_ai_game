@@ -218,28 +218,25 @@ export default function Desk({orderAnswerArr}) {
     React.useEffect(() => {
         console.log("process level up")
         if (level.level === 0) return;
-        if (level.level < 2) {
-            setRules(prev => {
-            const newRules = prev.inactive.splice(0,4)
-            prev.active.push(...newRules)
-            return prev
-        })        
-        }
-        if (level.level >= 2) {
-            setRules(prev => {
-                const newRules = prev.inactive.splice(0,4)
-                prev.active = [...newRules]
-            return prev
-            })
-            setRules(prev => {
+        setRules(prev => {
+            const count = Math.min(4, prev.inactive.length);
+            const take = prev.inactive.slice(0, count)
+            const rest = prev.inactive.slice(count)
+            if (level.level < 2) {
                 return {
-                    ...prev,
-                    active: prev.active.map(rule => {
+                    active: [...prev.active, take],
+                    inactive: rest
+                }
+            } else if (level.level >= 2) {
+                const emptyTake = take.map(rule => {
                         return {id: rule.id, order: rule.order, answer: "???"}
                     })
+                return {
+                    inactive: rest,
+                    active: [...emptyTake]
                 }
-            })        
-        }
+            }
+        })
     }, [level.level])
 
     function updateRule(order) {
