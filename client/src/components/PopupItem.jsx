@@ -113,7 +113,7 @@ export default function PopupItem({text, buttons, updateDialogue, actions, order
     }
 
     const buttonElements = buttons.map(btn => {
-        return <button key={btn.id}  onClick={() => updateDialogue(btn.goto)}>{btn.text}</button>
+        return <button key={btn.id} disabled={helpDisabled} className={helpDisabled ? 'btn-disabled' : ''} onClick={() => updateDialogue(btn.goto)}>{btn.text}</button>
     })
 
     return (

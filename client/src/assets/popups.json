@@ -17,7 +17,7 @@
                 ]
             },
             {
-                "text": "This is a game is based on 'The Chinese Room Argument'. It's a philosophical thought experiment by John Searle that aims to see if modern computers can ever 'understand' the things they've been programmed to do.",
+                "text": "This is a game based on 'The Chinese Room Argument'. It's a philosophical thought experiment by John Searle that aims to see if modern computers can ever 'understand' the things they've been programmed to do.",
                 "buttons": [
                     {
                         "id": 1,
@@ -64,7 +64,7 @@
                 "actions": 0
             },
             {
-                "text": "Then, you can open your rulebook to find out how to respond. Click the rules book below to see. You can drag it around.",
+                "text": "Then, you can open your rulebook to find out how to respond. Click the rules book below to see. You can drag it around. And if you ever need to close it just click it again!",
                 "buttons": [
                     {
                         "id": 1,
@@ -356,7 +356,7 @@
         },
         {
         "id": 7,
-        "text": "This leaves us with the notion that AI as we know it likely won't become 'conscious'. It doesn't discount the idea of new forms of intelligence forming, but just that computers as we've built them today are constrained in this way. But this doesn't discount the importance that emerging AI systems will have in changing the way we live, work, and learn. Just that, maybe, we should be careful how much we trust a system that literally doesn't know what it is talking about.",
+        "text": "This leaves us with the notion that AI as we know it likely won't become 'conscious'. It doesn't discount the idea of new forms of intelligence forming, but just that computers as we've built them today are constrained in this way. But this doesn't discount the importance that emerging AI systems will have in changing the way we live, work, and learn. Just that, maybe, we should be careful how much we trust a system that literally doesn't know what it is talking about. That's the end for now, thanks for playing!",
         "buttons": [],
         "help": true
         }

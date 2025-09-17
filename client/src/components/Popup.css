@@ -43,7 +43,7 @@
 
 .popup-text {
     margin: 6px;
-    margin-right: 8px;
+    padding-inline: 12px;
 }
 
 .popup-btns-bottom {
@@ -72,11 +72,19 @@
     cursor: pointer;
 }
 
-.popup-btns > button:hover {
+.popup-btns > button:hover:enabled {
     border: 1px solid rgb(84, 190, 239);    
     background-color: rgb(121, 121, 123);
     color: white;
 }
+
+button.btn-disabled {
+    cursor: default;
+    color: grey;
+    border: 1px solid rgb(75, 128, 153);    
+
+}
+
 
 .popup-help {
     all: unset;
