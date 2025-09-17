@@ -100,7 +100,6 @@ export default function Desk({orderAnswerArr}) {
         const response = await axios.get(`${host}/initialise`, {params: {symbol: language}})
         setFetchedData(response)
         console.log("received data")
-        console.log(response)
     }
 
     React.useEffect(() => {
@@ -132,7 +131,6 @@ export default function Desk({orderAnswerArr}) {
         if (!useAPI) return
         if (!startUpdate) return
         if (appliedFetchedOnce) return
-        console.log('updated using API')
         const seen = new Set();
         setCharacters(prev => {
             return prev.map(c => {
@@ -210,7 +208,6 @@ export default function Desk({orderAnswerArr}) {
     }, [currentlyPlaying, generateNewOrder])
 
     React.useEffect(() => {
-        console.log("process level up")
         if (level.level === 0) return;
         setRules(prev => {
             const count = Math.min(4, prev.inactive.length);
